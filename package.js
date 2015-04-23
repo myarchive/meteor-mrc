@@ -15,8 +15,9 @@ Package.onUse(function(api) {
 	api.use('mongo');
 	api.use('alanning:roles@1.2.12');
 	api.use('splendido:accounts-meld@1.3.0');
+	api.use('tmeasday:presence@1.0.6');
 
-	api.use('twbs:bootstrap@3.3.4', 'client');
+  	api.use('twbs:bootstrap@3.3.4', 'client');
 	api.use('mizzao:bootboxjs@4.4.0', 'client');
 	api.use('fortawesome:fontawesome@4.3.0', 'client');
 	api.use('iron:router@1.0.7', 'client');
