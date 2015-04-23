@@ -1,0 +1,148 @@
+html,body { height: 100%; margin: 0px; padding: 0px; }
+
+a { cursor: pointer; }
+
+.navbar .divider-vertical {
+	height: 50px;
+	margin: 0 9px;
+	border-right: 1px solid #ffffff;
+	border-left: 1px solid #f2f2f2;
+}
+
+.navbar-inverse .divider-vertical {
+	border-right-color: #222222;
+	border-left-color: #111111;
+}
+
+@media (max-width: 767px) {
+	.navbar-collapse .nav > .divider-vertical {
+		display: none;
+	}
+}
+
+.navbar li > a {
+	font-weight: bold;
+}
+
+#login {
+	margin: 150px auto;
+	height: 250px;
+	width: 450px;
+	background: #eee;
+	border-radius: 20px;
+	border: 1px dotted #aaa;
+	overflow: hidden;
+	position: relative;
+}
+#login > h1 {
+	padding: 0;
+	margin: 0;
+	text-align: center;
+	border-bottom: 1px solid #444;
+	font-size: 32px;
+	background: #ddd;
+}
+#login > p {
+	padding: 10px;
+}
+#login > center {
+	width: 100%;
+	text-align: center;
+	position: absolute;
+	bottom: 50px; left: 0;
+}
+
+#cr-name {
+	padding: 50px 0 0 0;
+	height: 100%;
+	background: #ddd;
+	overflow-y: scroll;
+}
+
+.navbar-nav>li>a.profile-image {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+#cr-name > h1 {
+	margin: 0;
+	padding: 5px;
+	font-size: 20px;
+	background: red;
+}
+
+#cr-name > h2 {
+	margin: 0;
+	padding: 5px;
+	font-size: 16px;
+	background: blue;
+}
+#cr-name > p {
+	margin: 0;
+	padding: 5px 5px 5px 25px;
+	font-size: 14px;
+	position:relative;
+}
+#cr-name > p:hover {
+	background: #eee;
+	cursor: pointer;
+}
+#cr-name > p.ops {
+	background: #6666ff;
+}
+#cr-name > p.ops:before {
+	position:absolute;
+	font-family: FontAwesome;
+	top: 5px; left: 5px;
+	content: "@";	
+}
+#cr-name > p.vip {
+	background: #9999ff;
+}
+#cr-name > p.vip:before {
+	position:absolute;
+	font-family: FontAwesome;
+	top: 4px; left: 8px;
+	content: "+";	
+}
+
+#cr-chat {
+	height: 100%;
+	padding: 50px 5px 0 5px;
+	position: relative;
+}
+
+#cr-content {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	bottom: 0; left: 0;
+	background: #fafafa;
+	padding: 50px 0 40px 0;
+	overflow-y: scroll;
+	border-right: 1px solid #ccc;
+}
+#cr-content > p {
+	margin: 0;
+	padding: 5px;
+}
+
+#cr-content > .admin {
+	background: #ffc5d0;
+}
+
+#cr-content > .guest {
+	background: #fafafa;
+}
+
+#cr-content > .self {
+	background: #d2ffe1;
+}
+
+#cr-textarea {
+	width: 100%;
+	position: absolute;
+	bottom: 0; left: 0;
+	height: 40px;
+}
+

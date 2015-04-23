@@ -1,0 +1,128 @@
+<template name="chat_full">
+	{{> Template.dynamic template=crLoadChatTemplate}}
+</template>
+
+<template name="cr_login">
+	<div id="login">
+		<h1>Welcome to MRC</h1>
+		<p>MRC (Meteor Relay Chat) requires sign-in to use.  We do not request any access to your Facebook profile and can not post to your account.  This sign-in is simply to enter the chat system.</p>
+		<center>{{> loginButtons}}</center>
+	</div>
+</template>
+
+<template name="cr_chat">
+	<!-- Header -->
+	<header class="navbar navbar-default navbar-fixed-top navbar-inverse" role="banner">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".navbar-collapse">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a id="brand" class="navbar-brand">MRC</a>
+			</div>
+			<nav class="collapse navbar-collapse" role="navigation">
+				<ul class="nav navbar-nav">
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					
+					{{> navChats}}
+					{{> navRooms}}
+					{{> navAdmin}}
+					{{> navUser}}
+
+				</ul>
+			</nav>
+		</div>
+	</header>
+	<!-- Chat Area -->
+	<div id="cr-chat" class="col-md-10">
+		<div id="cr-content">
+			<p class="admin"><span class="name">Name 1:</span> FIRST MESSAGE</p>
+			<p class="guest"><span class="name">Name 12:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="self"><span class="name">Name 14:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> Message here...</p>
+			<p class="guest"><span class="name">Name 13:</span> LAST MESSAGE</p>
+		</div>
+		<div id="cr-textarea"><input id="cr-input" placeholder="Enter message here" style="height:100%;width:100%"></div>
+	</div> 
+
+	<!-- Name Menu -->
+	<div id="cr-name" class="col-md-2">
+		{{{showRoomName}}}
+		<p class="ops">Name 1</p>
+		<p class="ops">Name 2</p>
+		<p class="vip">Name 3</p>
+		<p class="vip">Name 4</p>
+		<p class="vip">Name 5</p>
+		<p class="vip">Name 6</p>
+		<p class="vip">Name 7</p>
+		<p class="gue">Name 8</p>
+		<p class="gue">Name 9</p>
+		<p class="gue">Name 10</p>
+		<p class="gue">Name 11</p>
+		<p class="gue">Name 12</p>
+		<p class="gue">Name 13</p>
+		<p class="gue">Name 14</p>
+		<p class="gue">Name 15</p>
+		<p class="gue">Name 16</p>
+		<p class="gue">Name 17</p>
+		<p class="gue">Name 18</p>
+		<p class="gue">Name 19</p>
+		<p class="gue">Name 20</p>
+		<p class="gue">Name 21</p>
+		<p class="gue">Name 22</p>
+		<p class="gue">Name 23</p>
+		<p class="gue">Name 24</p>
+		<p class="gue">Name 25</p>
+		<p class="gue">Name 26</p>
+		<p class="gue">Name 27</p>
+		<p class="gue">Name 28</p>
+		<p class="gue">Name 29</p>
+		<p class="gue">Name 30</p>
+		<p class="gue">Name 31</p>
+		<p class="gue">Name 32</p>
+		<p class="gue">Name 33</p>
+		<p class="gue">Name 34</p>
+		<p class="gue">Name 35</p>
+		<p class="gue">Name 36</p>
+	</div>
+</template>
