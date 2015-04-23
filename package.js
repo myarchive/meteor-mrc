@@ -7,18 +7,20 @@ Package.describe({
 
 Package.onUse(function(api) {
 	api.versionsFrom('METEOR@0.9.2');
+	
 	api.use('ui', 'client');
 	api.use('blaze', 'client');
 	api.use('templating', 'client');
-	api.use('mongo');
 	
-	api.use('twbs:bootstrap@3.3.4', 'client');
-	api.use('mizzao:bootboxjs@4.4.0', 'client');
-	api.use('fortawesome:fontawesome@4.3.0', 'client');
-
+	api.use('mongo');
 	api.use('alanning:roles@1.2.12');
 	api.use('splendido:accounts-meld@1.3.0');
 
+	api.use('twbs:bootstrap@3.3.4', 'client');
+	api.use('mizzao:bootboxjs@4.4.0', 'client');
+	api.use('fortawesome:fontawesome@4.3.0', 'client');
+	api.use('iron:router@1.0.7', 'client');
+	
     api.add_files("base.css", "client");
     api.add_files("base.html", "client");
     api.add_files("base.js", "client");
