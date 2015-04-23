@@ -1,3 +1,5 @@
+Router.route('/', function () {}); // blank route to prevent home page spam from IR
+
 Template.registerHelper('mrcLoadBase', function() {
 	if (Meteor.user()) return "mrc_base";
 	else return (Template["my_login"]) ? "my_login" : "cr_login";
