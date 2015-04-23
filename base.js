@@ -1,38 +1,31 @@
-Template.registerHelper('crLoadChatTemplate', function() {
-	if (Meteor.user()) return "cr_chat";
-	else return "cr_login";
+Template.registerHelper('mrcLoadBase', function() {
+	if (Meteor.user()) return "mrc_base";
+	else return (Template["my_login"]) ? "my_login" : "cr_login";
 });
 
-Template.cr_chat.onRendered(function () {
+Template.mrc_base.onRendered(function () {
+	scrollToBottom();
 	renderEnv();
+	$(window).resize(function() {
+		renderEnv();
+	});
 });
 
-Template.chat_full.helpers({
-	sitename: function () {
-		return "Sitename";
+Template.mrc_base.helpers({
+	'username': function () {
+		return Meteor.user().profile.name;
 	}
 });
 
-Template.cr_chat.helpers({
-	'showChats': function () {
-		return Blaze.toHTMLWithData(Template.navChats);
-	},
-	'showRooms': function () {
-		return Blaze.toHTMLWithData(Template.navRooms);
-	},
-	'showAdmin': function () {
-		return Blaze.toHTMLWithData(Template.navAdmin);
-	},
-	'showRoomName': function () {
-		return '<h1><i class="fa fa-slack"></i> Main Room</h1>';
-	}
+Template.mrc_base.helpers({
 });
 
-Template.cr_chat.events({
+Template.mrc_base.events({
 	'click #brand': function () {
+		var html = (Template["my_brand"]) ? Blaze.toHTMLWithData(Template.my_brand) : Blaze.toHTMLWithData(Template.mrc_brand);
 		bootbox.dialog({
 			title: "About",
-			message: Blaze.toHTMLWithData(Template.chats),
+			message: html,
 			onEscape: true,
 			closeButton: true,
 			buttons: {
@@ -49,41 +42,36 @@ Template.cr_chat.events({
 
 });
 
-function renderEnv(type) {
-	if (type === "chat") {
-		$('#cr-chat,#cr-name').removeClass();
-		$('#cr-name').hide();
-		$('#cr-chat').addClass('col-md-12');
-	}
-	else {
-		$('#cr-chat,#cr-name').removeClass();
-		$('#cr-name').show();
-		$('#cr-chat').addClass('col-md-10');
-		$('#cr-name').addClass('col-md-2');
-	}
-	scrollToBottom();
-};
-
 function isAtBottom() {
-	var out = document.getElementById("cr-content");
+	var out = document.getElementById("mrc-chatarea");
 	var isScrolledToBottom = out.scrollHeight - out.clientHeight <= out.scrollTop + 1;
 	return isScrolledToBottom;
 }
 
 function scrollToBottom() {
-	var elm = document.getElementById("cr-content");
+	var elm = document.getElementById("mrc-chatarea");
 	var scr = elm.scrollHeight;
-	$('#cr-content').animate({scrollTop:scr}, 'fast');	
+	$('#mrc-chatarea').animate({scrollTop:scr}, 'fast');	
 }
+
+function renderEnv() {
+	var h = $(window).height();
+	$('#mrc-chatarea').css('height',h-90+'px').css('top','50px').css('padding','0');
+	$('#mrc-namearea').css('height',h-50+'px');
+}
+
+
+
+
 
 // Database way...
 this.addMessage = function(name,message) {
 	if (isAtBottom()) {
-		$("#cr-content").append('<p class="guest"><span class="name">'+name+'</span> '+message+'</p>');
+		$("#mrc-chatarea").append('<p class="guest"><span class="name">'+name+'</span> '+message+'</p>');
 		scrollToBottom();
 	}
 	else {
-		$("#cr-content").append('<p class="guest"><span class="name">'+name+'</span> '+message+'</p>');
+		$("#mrc-chatarea").append('<p class="guest"><span class="name">'+name+'</span> '+message+'</p>');
 		// unread count!!!
 		// line at last read
 		// remove line when at bottom
