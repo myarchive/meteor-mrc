@@ -3,13 +3,35 @@ Messages = new Mongo.Collection("messages");
 Rooms = new Mongo.Collection("rooms");
 
 if (Meteor.isServer) {
+	// Default settings
 	if (Settings.find({}) === 0) {
 		Settings.insert({
-			singleroom: true,
-			allowchats: false,
-			sitename: "Chatrooms"
+			sitename: "MRC+", // Your site name
+			privserver: false, // Prevents guests from seeing even default room.  Once signed in an admin must promote to use before use.
+			guestrooms: false, // Can guests see rooms? (other than default room)
+			guestchats: false, // Can guests use chat system?
+			guestsuppo: false  // Can guests use support?
 		});
 	}
+	
+	// Default room
+	if (Rooms.find({}) === 0) {
+		Rooms.insert({
+			name: "Main Room",	// Server's default room
+			droom: true			// Only one room will have this..
+		});
+		Rooms.insert({
+			name: "Admin Room",	// Server's admin room
+			aroom: true			// Only one room will have this..
+		});
+	}
+	// invite: false // invite only? (by operator)
+	// guests: false // allow guests?
+	// limits: false // limit who can join room by conditions
+
+
+
+
 
 	// server: publish the rooms collection, minus secret info.
 	Meteor.publish("rooms", function () {
