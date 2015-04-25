@@ -13,15 +13,15 @@ if (Meteor.isServer) {
 			guestsuppo: false  // Can guests use support?
 		});
 	}
-	
+
 	// Default room
 	if (Rooms.find({}) === 0) {
 		Rooms.insert({
-			name: "Main Room",	// Server's default room
+			name: "Main Room", // Server's default room
 			droom: true			// Only one room will have this..
 		});
 		Rooms.insert({
-			name: "Admin Room",	// Server's admin room
+			name: "Admin Room", // Server's admin room
 			aroom: true			// Only one room will have this..
 		});
 	}

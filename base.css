@@ -26,12 +26,10 @@ a { cursor: pointer; }
 
 #login {
 	margin: 150px auto;
-	height: 250px;
+	height: 200px;
 	width: 450px;
 	background: #eee;
-	border-radius: 20px;
 	border: 1px dotted #aaa;
-	overflow: hidden;
 	position: relative;
 }
 #login > h1 {
@@ -50,6 +48,25 @@ a { cursor: pointer; }
 	text-align: center;
 	position: absolute;
 	bottom: 50px; left: 0;
+}
+
+#newuser {
+	margin: 150px auto;
+	width: 450px;
+	background: #eee;
+	border: 1px dotted #aaa;
+	position: relative;
+}
+#newuser > h1 {
+	padding: 0;
+	margin: 0;
+	text-align: center;
+	border-bottom: 1px solid #444;
+	font-size: 32px;
+	background: #ddd;
+}
+#newuser > p {
+	padding: 10px;
 }
 
 #mrc-rightcol {
@@ -158,4 +175,20 @@ a { cursor: pointer; }
 	position: absolute;
 	bottom: 0; left: 0;
 	height: 40px;
+}
+
+.country {
+    margin: 10px;
+    padding: 4px 6px;
+    border: 1px solid #999;
+    border-radius: 5px;
+    display: inline-block;
+    font-family: tahoma;
+    font-size: 12px
+}
+.country i {
+    background: url(https://dl.dropbox.com/u/3413283/flags.png) no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 11px;
 }

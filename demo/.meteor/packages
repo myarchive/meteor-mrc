@@ -6,3 +6,11 @@
 
 meteor-platform
 alisalaah:mrc
+accounts-ui
+accounts-facebook
+accounts-password
+accounts-github
+accounts-google
+accounts-twitter
+accounts-meteor-developer
+meteorhacks:kadira
