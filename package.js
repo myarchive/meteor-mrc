@@ -7,12 +7,12 @@ Package.describe({
 
 Package.onUse(function(api) {
 	api.versionsFrom('METEOR@0.9.2');
-	
+	api.use('accounts-base', ['client','server']);
+	api.use('accounts-password', ['client','server']); // for testing dummy account creation
 	api.use('ui', 'client');
 	api.use('blaze', 'client');
 	api.use('templating', 'client');
 	
-	api.use('mongo');
 	api.use('alanning:roles@1.2.12');
 	api.use('splendido:accounts-meld@1.3.0');
 	api.use('tmeasday:presence@1.0.6');
@@ -38,6 +38,8 @@ Package.onUse(function(api) {
 	api.add_files("user.html", "client");
     api.add_files("user.js", "client");
 	
-    api.add_files("server.js", "server");
-    api.add_files("collections.js");
+    api.add_files("collections.js", "client");
+
+	api.add_files("server-collections.js", "server");
+    api.add_files("server-methods.js", "server");
 });
