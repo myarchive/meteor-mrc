@@ -98,6 +98,14 @@ Template.mrc_base.helpers({
 			var m = time.getMinutes();
 			html += '<p class=""><span class="time">' + h + ':' + m + '</span> <span class="name">' + nick + ':</span> ' + msg.message + '</p>';
 		});
+
+		if (isAtBottom()) {
+			//setTimeout(function() { if (isAtBottom()) { scrollToBottom() } }, 100);
+			scrollToBottom();
+		} else {
+			//increase unread
+		}
+		
 		return html;
 	},
 	'roomName': function () {
@@ -139,14 +147,14 @@ Template.mrc_base.events({
 		var message = $('#mrc-input').val();
 		var room = Meteor.rooms.findOne({droom:true})._id;
 		Meteor.messages.insert({
+			date: new Date(),
 			sender: Meteor.user()._id,
 			room: room,
 			message: message
-		}, function(err,res) {
-			console.log(err);
-			console.log(res);
-			console.log('-');
-			//$('#mrc-input').val('');
+		}, function(err) {
+			if (err)
+				return false;
+			$('#mrc-input').val('');
 		});
 	}
 
@@ -250,81 +258,3 @@ function validateForm(submit) {
 
 	return true;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Database way...
-this.addMessage = function (name, message) {
-	if (isAtBottom()) {
-		$("#mrc-chatarea").append('<p class="guest"><span class="name">' + name + '</span> ' + message + '</p>');
-		scrollToBottom();
-	}
-	else {
-		$("#mrc-chatarea").append('<p class="guest"><span class="name">' + name + '</span> ' + message + '</p>');
-		// unread count!!!
-		// line at last read
-		// remove line when at bottom
-		// etc...
-	}
-};
-
-
-/*
- 
- (function($) {
- // size = flag size + spacing
- var default_size = {
- w: 20,
- h: 15
- };
- 
- function calcPos(letter, size) {
- return -(letter.toLowerCase().charCodeAt(0) - 97) * size;
- }
- 
- $.fn.setFlagPosition = function(iso, size) {
- size || (size = default_size);
- 
- return $(this).css('background-position',
- [calcPos(iso[1], size.w), 'px ', calcPos(iso[0], size.h), 'px'].join(''));
- };
- })(jQuery);
- 
- $('.country i').setFlagPosition('es');
- 
- .country {
- margin: 10px;
- padding: 4px 6px;
- border: 1px solid #999;
- border-radius: 5px;
- display: inline-block;
- font-family: tahoma;
- font-size: 12px
- }
- .country i {
- background: url(https://dl.dropbox.com/u/3413283/flags.png) no-repeat;
- display: inline-block;
- width: 16px;
- height: 11px;
- }
- 
- <div class="country"><i></i> <b>Spain</b></div>
- 
- http://jsfiddle.net/roberkules/TxAhb/
- 
- */

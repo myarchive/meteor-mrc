@@ -203,5 +203,5 @@ Meteor.messages.allow({
 });
 
 Meteor.messages.before.insert(function (userId, doc) {
-  doc.date = new Date();
+	doc.date = new Date();
 });
