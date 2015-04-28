@@ -12,7 +12,11 @@ Template.registerHelper('mrcLoadBase', function () {
 		return "mrc_base";
 	}
 	else
-		return (Template["my_login"]) ? "my_login" : "cr_login";
+		return (Template["my_login"]) ? "my_login" : "mrc_login";
+});
+
+Template.registerHelper('mrcLoadBrand', function () {
+		return (Template["my_brand"]) ? "my_brand" : "mrc_brand";
 });
 
 Template.mrc_newuser.events({
@@ -75,11 +79,12 @@ Template.mrc_newuser.helpers({
  */
 
 Template.mrc_base.onRendered(function () {
-	scrollToBottom();
 	renderEnv();
 	$(window).resize(function () {
 		renderEnv();
 	});
+	setTimeout(function() { scrollToBottom() }, 200);
+	setTimeout(function() { scrollToBottom() }, 500);
 });
 
 Template.mrc_base.helpers({
@@ -100,7 +105,6 @@ Template.mrc_base.helpers({
 		});
 
 		if (isAtBottom()) {
-			//setTimeout(function() { if (isAtBottom()) { scrollToBottom() } }, 100);
 			scrollToBottom();
 		} else {
 			//increase unread
@@ -125,7 +129,7 @@ Template.mrc_base.helpers({
 
 Template.mrc_base.events({
 	'click #brand': function () {
-		var html = (Template["my_brand"]) ? Blaze.toHTMLWithData(Template.my_brand) : Blaze.toHTMLWithData(Template.mrc_brand);
+		var html = (Template["my_brand_pop"]) ? Blaze.toHTMLWithData(Template.my_brand_pop) : Blaze.toHTMLWithData(Template.mrc_brand_pop);
 		bootbox.dialog({
 			title: "About",
 			message: html,
@@ -162,6 +166,7 @@ Template.mrc_base.events({
 
 function isAtBottom() {
 	var out = document.getElementById("mrc-chatarea");
+	if (!out) return false;
 	var isScrolledToBottom = out.scrollHeight - out.clientHeight <= out.scrollTop + 1;
 	return isScrolledToBottom;
 }
