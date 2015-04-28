@@ -178,18 +178,30 @@ Meteor.publish("roomMessages", function (room) {
 });
 
 // Presence
-Meteor.publish('usernames', function() {
+Meteor.publish('usernames', function () {
 	return Meteor.users.find({}, {fields: {username: 1, profile: 1}});
 });
 
-Meteor.publish('userPresence', function() {
-  // Setup some filter to find the users your user
-  // cares about. It's unlikely that you want to publish the 
-  // presences of _all_ the users in the system.
+Meteor.publish('userPresence', function () {
+	// Setup some filter to find the users your user
+	// cares about. It's unlikely that you want to publish the 
+	// presences of _all_ the users in the system.
 
-  // If for example we wanted to publish only logged in users we could apply:
-  // filter = { userId: { $exists: true }};
-  var filter = {}; 
+	// If for example we wanted to publish only logged in users we could apply:
+	// filter = { userId: { $exists: true }};
+	var filter = {};
 
-  return Presences.find(filter, { fields: { state: true, userId: true }});
+	return Presences.find(filter, {fields: {state: true, userId: true}});
+});
+
+Meteor.messages.allow({
+	insert: function (userId, doc) {
+		// the user must be logged in, and the sender must be self
+		// add room attendance rules here also...
+		return (userId && doc.sender === userId);
+	}
+});
+
+Meteor.messages.before.insert(function (userId, doc) {
+  doc.date = new Date();
 });

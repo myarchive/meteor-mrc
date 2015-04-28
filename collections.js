@@ -9,3 +9,11 @@ Meteor.subscribe("rooms", { onReady: function() {
 
 Meteor.subscribe('usernames');
 Meteor.subscribe('userPresence');
+
+Meteor.messages.allow({
+	insert: function (userId, doc) {
+		// the user must be logged in, and the sender must be self
+		// add room attendance rules here also...
+		return (userId && doc.sender === userId);
+	}
+});

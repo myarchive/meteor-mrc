@@ -104,12 +104,12 @@ Template.mrc_base.helpers({
 		return 'Temp..';
 	},
 	'roomUsers': function () {
-		var users = Meteor.presences.find({state:"online"});
+		var users = Meteor.presences.find({state: "online"});
 		var html = '';
 		users.forEach(function (user) {
 			//var nick = Meteor.users.findOne(user._id).username;
 			var nick = Meteor.users.findOne(user.userId).profile.name;
-			html += '<p class="gue">'+nick+'</p>';
+			html += '<p class="gue">' + nick + '</p>';
 		});
 		return html;
 	}
@@ -134,15 +134,19 @@ Template.mrc_base.events({
 			}
 		});
 	},
-	'submit #mrc-send': function(event) {
+	'submit #mrc-send': function (event) {
 		event.preventDefault();
 		var message = $('#mrc-input').val();
-		Meteor.call('sendMessage', message, function(err,res){
-			if (err)
-				return false;
-			
-			if (res)
-				$('#mrc-input').val('');
+		var room = Meteor.rooms.findOne({droom:true})._id;
+		Meteor.messages.insert({
+			sender: Meteor.user()._id,
+			room: room,
+			message: message
+		}, function(err,res) {
+			console.log(err);
+			console.log(res);
+			console.log('-');
+			//$('#mrc-input').val('');
 		});
 	}
 
@@ -222,7 +226,7 @@ function validateForm(submit) {
 		$('#username').after('<span class="help-block">Letters and numbers only</span>');
 		err = true;
 	}
-	else if (form.username !== "" && Meteor.call('checkUsername', form.username)) {
+	else if (form.username !== "" && Meteor.users.findOne({username: form.username})) {
 		$('#username').parent().parent().addClass('has-error');
 		$('#username').after('<span class="help-block">Username exists</span>');
 		err = true;

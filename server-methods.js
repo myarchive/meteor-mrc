@@ -35,33 +35,7 @@ Meteor.methods({
 
 		Meteor.users.update({_id: this.userId}, {$set: {"username": username}});
 		return true;
-	},
-	checkUsername: function (username) {
-		check(username, String);
-		
-		if (!this.userId) 
-			throw new Meteor.Error(401, 'you must be logged in!');
-
-		if (Meteor.users.findOne({username: username}))
-			return false;
-		
-		else
-			return true;
-	},
-	sendMessage: function (message) {
-		check(message, String);		
-		if (!this.userId) 
-			throw new Meteor.Error(401, 'you must be logged in!');
-		
-		Meteor.messages.insert({
-			date: new Date(),
-			sender: this.userId,
-			room: Meteor.rooms.findOne({droom:true})._id,
-			message: message
-		});
-		return true;
 	}
-
 });
 
 //Meteor.call('setUsername', 'ali', function(error){ console.log(error); });
