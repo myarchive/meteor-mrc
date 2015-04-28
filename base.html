@@ -34,15 +34,18 @@
 			{{{messages}}}
 		</div>
 		<div id="mrc-textarea">
-			<input id="cr-input" placeholder="Enter message here" style="height:100%;width:100%">
+			<form id="mrc-send" style="margin:0;padding:0;display:inline;position:relative;">
+				<input id="mrc-input" placeholder="Enter message here" style="height:100%;width:100%">
+				<button id="submit" name="submit" class="btn btn-primary" style="position:absolute;top:-8px;right:3px">Send</button>
+			</form>
 		</div>
 	</div> 
 
 	<!-- Name Menu -->
 	<div id="mrc-rightcol" class="col-sm-2">
 		<div id="mrc-namearea">
-			<h1>Main Room</h1>
-			{{users}}
+			<h1>{{roomName}}</h1>
+			{{{roomUsers}}}
 		</div>
 	</div>
 </template>
@@ -73,6 +76,7 @@
 					<label class="col-md-4 control-label" for="username">User name</label>  
 					<div class="col-md-6">
 						<input id="username" name="username" type="text" placeholder="jdoe" class="form-control input-md">
+						<span class="help-block">Also known as a display name, nick name or short name.</span>
 					</div>
 				</div>
 

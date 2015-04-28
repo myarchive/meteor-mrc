@@ -1,3 +1,7 @@
+//Presence.state = function () {
+//	return "online";
+//}
+
 Router.route('/', function () {
 }); // blank route to prevent home page spam from IR
 
@@ -83,13 +87,32 @@ Template.mrc_base.helpers({
 		return Meteor.user().profile.name;
 	},
 	'messages': function () {
-//		var messages = Messages.find({});
-		//				<p class="{{rank}}"><span class="time">{{time}}</span> <span class="name">{{name}}:</span> {{text}}</p>
-		return '<p class="gue"><span class="time">01:10:55</span> <span class="name">Name 10:</span> First message.</p>';
+		// Session get roomID for multiroom
+		var messages = Meteor.messages.find({}, {sort: {date: 1}});
+		var html = '';
+		messages.forEach(function (msg) {
+			//var nick = Meteor.users.findOne(msg.sender).username;
+			var nick = Meteor.users.findOne(msg.sender).profile.name;
+			var time = new Date(msg.date);
+			var h = (time.getHours() < 10) ? '0' + time.getHours() : time.getHours();
+			var m = time.getMinutes();
+			html += '<p class=""><span class="time">' + h + ':' + m + '</span> <span class="name">' + nick + ':</span> ' + msg.message + '</p>';
+		});
+		return html;
+	},
+	'roomName': function () {
+		return 'Temp..';
+	},
+	'roomUsers': function () {
+		var users = Meteor.presences.find({state:"online"});
+		var html = '';
+		users.forEach(function (user) {
+			//var nick = Meteor.users.findOne(user._id).username;
+			var nick = Meteor.users.findOne(user.userId).profile.name;
+			html += '<p class="gue">'+nick+'</p>';
+		});
+		return html;
 	}
-});
-
-Template.mrc_base.helpers({
 });
 
 Template.mrc_base.events({
@@ -109,6 +132,17 @@ Template.mrc_base.events({
 					}
 				}
 			}
+		});
+	},
+	'submit #mrc-send': function(event) {
+		event.preventDefault();
+		var message = $('#mrc-input').val();
+		Meteor.call('sendMessage', message, function(err,res){
+			if (err)
+				return false;
+			
+			if (res)
+				$('#mrc-input').val('');
 		});
 	}
 

@@ -1,14 +1,11 @@
-;(function () {
-
-	Meteor.mrc = new Meteor.Collection("settings");
-	Meteor.rooms = new Meteor.Collection("rooms");
-	Meteor.messages = new Meteor.Collection("messages");
+Meteor.mrc = new Meteor.Collection("mrc");
+Meteor.rooms = new Meteor.Collection("rooms");
+Meteor.messages = new Meteor.Collection("messages");
 
 
-	Meteor.subscribe("rooms");
-	droom = Meteor.rooms.findOne({droom: true});
-	if (droom) {
-		Meteor.subscribe("roomMessages", droom._id);
-	}
+Meteor.subscribe("rooms", { onReady: function() { 
+	Meteor.subscribe("roomMessages", Meteor.rooms.findOne({droom: true})._id);
+}});
 
-});
+Meteor.subscribe('usernames');
+Meteor.subscribe('userPresence');
