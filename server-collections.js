@@ -167,52 +167,6 @@ Meteor.rooms.update(aroom, {$set: {
 		]
 	}});
 
-// For testing! - Create test messages
-if (Meteor.messages.find({}).count() === 0) {
-	Meteor.messages.insert({
-		date: new Date(),
-		sender: guest,
-		room: droom,
-		message: 'Lorem ipsum 1'
-	});
-	Meteor.messages.insert({
-		date: new Date(),
-		sender: user,
-		room: droom,
-		message: 'Lorem ipsum 2'
-	});
-	Meteor.messages.insert({
-		date: new Date(),
-		sender: helper,
-		room: droom,
-		message: 'Lorem ipsum 3'
-	});
-	Meteor.messages.insert({
-		date: new Date(),
-		sender: admin,
-		room: droom,
-		message: 'Lorem ipsum 4'
-	});
-	Meteor.messages.insert({
-		date: new Date(),
-		sender: user1,
-		room: droom,
-		message: 'Lorem ipsum 5'
-	});
-	Meteor.messages.insert({
-		date: new Date(),
-		sender: user2,
-		room: droom,
-		message: 'Lorem ipsum 6'
-	});
-	Meteor.messages.insert({
-		date: new Date(),
-		sender: user3,
-		room: droom,
-		message: 'Lorem ipsum 7'
-	});
-}
-
 // server: publish the rooms collection, minus secret info.
 Meteor.publish("rooms", function () {
 	return Meteor.rooms.find({}, {fields: {secretInfo: 0}});
