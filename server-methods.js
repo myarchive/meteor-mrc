@@ -1,7 +1,7 @@
 Meteor.methods({
 	setGender: function () {
 		var user = Meteor.users.findOne(this.userId);
-		
+
 		if (!user.profile || !user.profile.gender) {
 			if (user.services.facebook && user.services.facebook.gender) {
 				Meteor.users.update(this.userId, {$set: {"profile.gender": user.services.facebook.gender}});
@@ -12,7 +12,7 @@ Meteor.methods({
 				return true;
 			}
 		}
-		
+
 		return false;
 	},
 	setUsername: function (username) {
@@ -35,8 +35,32 @@ Meteor.methods({
 
 		Meteor.users.update({_id: this.userId}, {$set: {"username": username}});
 		return true;
+	},
+	onConnect: function () {
+		// If not in any rooms start with default
+		// If default is allowed
+
+		// If not in a room join default
+		if (!Meteor.rooms.findOne({joined: this.userId})) {
+			var room = Meteor.rooms.findOne({droom:true});
+			var ppl = (room.joined) ? room.joined : [];
+			ppl.push(this.userId);
+			Meteor.rooms.update({_id: room._id}, {$set: {joined: ppl}});
+		}
+		return true;
+	},
+	joinRoom: function (room_id) {
+		check(room, String);
+		var room = Meteor.rooms.findOne(room_id);
+
+		if (!room)
+			throw new Meteor.Error("noroom", "No room found.");
+		// If is allowed -- needs done
+
+		var ppl = (room.joined) ? room.joined : [];
+		ppl.push(this.userId);
+		Meteor.rooms.update({_id: room._id}, {$set: {joined: ppl}});
+		
+		return true;
 	}
 });
-
-//Meteor.call('setUsername', 'ali', function(error){ console.log(error); });
-//Meteor.call('checkUsername', 'ali');

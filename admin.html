@@ -3,9 +3,29 @@
 	<li class="dropdown">
 		<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cogs"></i> Admin <b class="caret"></b></a>
 		<ul class="dropdown-menu">
-			<li><a id="editp"><i class="fa fa-users"></i> Users</a></li>
-			<li><a id="prefs"><i class="fa fa-slack"></i> Rooms</a></li>
-			<li><a id="tickt"><i class="fa fa-support"></i> Tickets</a></li>
+			<li><a id="ausers"><i class="fa fa-users"></i> Users</a></li>
+			<li><a id="arooms"><i class="fa fa-slack"></i> Rooms</a></li>
+			<li><a id="aservr"><i class="fa fa-slack"></i> Server</a></li>
+			<li><a id="aticks"><i class="fa fa-support"></i> Tickets</a></li>
 		</ul>
 	</li>
+</template>
+
+<template name="ausers">
+	<table id="ausers" class="table table-striped table-bordered" cellspacing="0" width="100%">
+		<thead>
+			<tr>
+				<th>&nbsp;</th>
+				<th>Name</th>
+				<th>Username</th>
+				<th>Gender</th>
+				<th>Role</th>
+				<th>Last Login</th>
+				<th>Services</th>
+			</tr>
+		</thead>
+		<tbody>
+			{{{allUsers}}}
+		</tbody>
+	</table>
 </template>

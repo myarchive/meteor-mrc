@@ -1,0 +1,41 @@
+<template name="mrc_login">
+	<div id="login">
+		<h1>MRC (Meteor Relay Chat)</h1>
+		<p>Chat requires sign-in to use.</p>
+		<center>{{> loginButtons}}</center>
+	</div>
+</template>
+
+<template name="mrc_newuser">
+	<div id="newuser">
+		<h1>Welcome to MRC</h1>
+		<br>
+		<form class="form-horizontal" name="mrc_nuform">
+			<fieldset>
+				<!-- Text input-->
+				{{{nameInput}}}
+
+				<!-- Text input-->
+				<div class="form-group">
+					<label class="col-md-4 control-label" for="username">User name</label>  
+					<div class="col-md-6">
+						<input id="username" name="username" type="text" placeholder="jdoe" class="form-control input-md">
+						<span class="help-block">Also known as a display name, nick name or short name.</span>
+					</div>
+				</div>
+
+				<!-- Multiple Radios (inline) -->
+				{{{gender}}}
+
+				<!-- Button -->
+				<div class="form-group">
+					<label class="col-md-4 control-label" for="submit"></label>
+					<div class="col-md-5">
+						<button id="submit" name="submit" class="btn btn-primary">Submit</button>
+					</div>
+				</div>
+
+			</fieldset>
+		</form>
+	</div>
+</template>

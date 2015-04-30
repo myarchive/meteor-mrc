@@ -1,6 +1,17 @@
-Template.navChats.helpers({
+Template.registerHelper('mrcShowChats', function () {
+	var myroles = (Meteor.user().role) ? Meteor.user().role : 'guest';
+
+	if (myroles !== 'guest')
+		return "navChats";
+	return "";
 });
 
+Template.navChats.helpers({
+	currChats: function() {
+		var html = '';
+		return html;
+	}
+});
 Template.navChats.events({
 	'click #chats': function () {
 		bootbox.dialog({
