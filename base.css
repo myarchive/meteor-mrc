@@ -105,10 +105,10 @@ a { cursor: pointer; }
 	background: #eee;
 	cursor: pointer;
 }
-#mrc-namearea > p.ops {
+#mrc-namearea > p.mod {
 	background: #6666ff;
 }
-#mrc-namearea > p.ops:before {
+#mrc-namearea > p.mod:before {
 	position:absolute;
 	font-family: FontAwesome;
 	top: 5px; left: 5px;
@@ -123,8 +123,18 @@ a { cursor: pointer; }
 	top: 4px; left: 8px;
 	content: "+";	
 }
+#mrc-namearea > p.gue {
+	background: #ccc;
+}
+#mrc-namearea > p.usr {
+	background: #ddd;
+}
+
+#mrc-namearea > p.idle {
+	color: #999;
+}
 #mrc-namearea > p.self {
-	color: #d2ffe1;
+	color: #fff;
 }
 
 #mrc-leftcol {
@@ -156,6 +166,13 @@ a { cursor: pointer; }
 
 #mrc-chatarea > p > .name {
 	font-weight: bold;
+	cursor: pointer;
+}
+#mrc-chatarea > p > .self {
+	font-weight: bold;
+}
+#mrc-chatarea > p > .name.gue {
+	font-style: oblique;
 }
 
 #mrc-chatarea > .ops {
@@ -167,7 +184,7 @@ a { cursor: pointer; }
 }
 
 #mrc-chatarea > .self {
-	background: #d2ffe1;
+	background: #eff;
 }
 
 #mrc-textarea {

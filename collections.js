@@ -8,7 +8,7 @@ Meteor.subscribe("rooms", { onReady: function() {
 }});
 
 Meteor.subscribe('usernames');
-Meteor.subscribe('userPresence');
+Meteor.subscribe('userStatus');
 
 Meteor.messages.allow({
 	insert: function (userId, doc) {

@@ -36,6 +36,12 @@ Meteor.publish('usernames', function () {
 	return Meteor.users.find({}, {fields: {username: 1, role: 1, profile: 1}});
 });
 
+// user status
+Meteor.publish("userStatus", function() {
+  return Meteor.users.find({ "status.online": true });
+});
+
+// allow sending messages
 Meteor.messages.allow({
 	insert: function (userId, doc) {
 		// the user must be logged in, and the sender must be self

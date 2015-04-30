@@ -31,15 +31,21 @@ Template.mrc_base.helpers({
 	},
 	'messages': function () {
 		// Session get roomID for multiroom
+		var myrole = (Meteor.user().role) ? Meteor.user().role : 'guest';
 		var messages = Meteor.messages.find({room: Session.get('currRoom')}, {sort: {date: 1}});
 		var html = '';
 		messages.forEach(function (msg) {
-			//var nick = Meteor.users.findOne(msg.sender).username;
-			var nick = Meteor.users.findOne(msg.sender).profile.name;
+			var user = Meteor.users.findOne(msg.sender);
+			//var nick = user.username;
+			var nick = user.profile.name;
 			var time = new Date(msg.date);
 			var h = (time.getHours() < 10) ? '0' + time.getHours() : time.getHours();
-			var m = time.getMinutes();
-			html += '<p class=""><span class="time">' + h + ':' + m + '</span> <span class="name">' + nick + ':</span> ' + msg.message + '</p>';
+			var m = (time.getMinutes() < 10) ? '0' + time.getMinutes() : time.getMinutes();
+			
+			var self = (msg.sender === Meteor.user()._id) ? 'self' : 'name';
+			if (myrole === 'guest' || myrole === 'user') var goru = 'usr';
+			else var goru = (user.role) ? 'usr' : 'gue';
+			html += '<p class="'+self+'"><span class="time">' + h + ':' + m + '</span> <span class="'+self+' '+goru+'" alt="'+user.username+'">' + nick + ':</span> ' + msg.message + '</p>';
 		});
 
 		if (isAtBottom()) {
@@ -51,16 +57,58 @@ Template.mrc_base.helpers({
 		return html;
 	},
 	'roomName': function () {
-		return 'Temp..';
+		var myrole = (Meteor.user().role) ? Meteor.user().role : 'guest';
+		if (myrole !== 'guest') {
+			var room = Meteor.rooms.findOne(Session.get('currRoom')).name;
+			return '<h1>'+room+'</h1>';
+		}
+		return false;
 	},
 	'roomUsers': function () {
-		var users = Meteor.presences.find({state: "online"});
+		if (!Session.get('currRoom'))
+			return false;
+		
+		var room = Meteor.rooms.findOne(Session.get('currRoom'));		
+		if (!room)
+			return false;
+
+		var myrole = (Meteor.user().role) ? Meteor.user().role : 'guest';
+		var skip = [];
 		var html = '';
-		users.forEach(function (user) {
-			//var nick = Meteor.users.findOne(user._id).username;
-			var user = Meteor.users.findOne(user.userId);
-			var nick = (user.profile && user.profile.name) ? user.profile.name : '...';
-			html += '<p class="gue">' + nick + '</p>';
+		room.mods.forEach(function(mod) {
+			if (room.joined.indexOf(mod) > -1) {
+				var user = Meteor.users.findOne(mod);
+				//var nick = (user.username) ? user.username : '...';
+				var self = (mod === Meteor.user()._id) ? 'self' : '';
+				var stat = (user.status.idle) ? 'idle' : 'active';
+				var nick = (user.profile && user.profile.name) ? user.profile.name : '...';
+				html += '<p class="mod '+stat+' '+self+'">' + nick + '</p>';
+				skip.push(mod);
+			}
+		});
+		room.vips.forEach(function(vip) {
+			if (room.joined.indexOf(vip) > -1) {
+				var user = Meteor.users.findOne(vip);
+				//var nick = (user.username) ? user.username : '...';
+				var self = (vip === Meteor.user()._id) ? 'self' : '';
+				var stat = (user.status.idle) ? 'idle' : 'active';
+				var nick = (user.profile && user.profile.name) ? user.profile.name : '...';
+				html += '<p class="mod '+stat+' '+self+'">' + nick + '</p>';
+				skip.push(vip);
+			}
+		});		
+		room.joined.forEach(function (uid) {
+			if (skip.indexOf(uid) < 0) {
+				var user = Meteor.users.findOne(uid);
+				//var nick = (user.username) ? user.username : '...';
+				var self = (uid === Meteor.user()._id) ? 'self' : '';
+				var stat = (user.status.idle) ? 'idle' : 'active';
+				var nick = (user.profile && user.profile.name) ? user.profile.name : '...';
+				
+				if (myrole === 'guest' || myrole === 'user') var goru = 'usr';
+				else var goru = (user.role) ? 'usr' : 'gue';
+				html += '<p class="'+goru+' '+stat+' '+self+'">' + nick + '</p>';
+			}
 		});
 		return html;
 	}
@@ -99,8 +147,12 @@ Template.mrc_base.events({
 				return false;
 			return true;
 		});
+	},
+	'click span.name': function(e) {
+		var uname = e.target.attributes.alt.value;
+		var input = $('#mrc-input').val();
+		$('#mrc-input').val('@'+uname+' '+input).focus();
 	}
-
 });
 
 function isAtBottom() {
