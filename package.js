@@ -8,6 +8,7 @@ Package.describe({
 Package.onUse(function(api) {
 	api.versionsFrom('METEOR@0.9.2');
 	api.use('accounts-base', ['client','server']);
+	api.use('accounts-ui', ['client','server']);
 	api.use('accounts-password', ['client','server']);	// for testing dummy account creation
 	api.use('ui', 'client');
 	api.use('blaze', 'client');
