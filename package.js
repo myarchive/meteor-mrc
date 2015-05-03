@@ -1,7 +1,7 @@
 Package.describe({
 	name: 'alisalaah:mrc',
 	summary: 'Meteor Relay Chat (MRC) is a Meteor chat implementation modeled after IRC',
-	version: '0.1.1',
+	version: '0.1.2',
 	git: 'https://github.com/alisalaah/meteor-mrc.git'
 });
 

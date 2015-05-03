@@ -1,12 +1,14 @@
 # Meteor Relay Chat (MRC)
 
+This project is in beta! Please consider helping to bring it to reality faster..
+
 Meteor Relay Chat (MRC) is a Meteor chat implementation modeled after IRC.  This is a complete solution and is customizable but not intended as an embedded solution in to an existing site.
 
 # Installation
 
 1. `meteor add alisalaah:mrc`
 2. Add `{{> mrc}}` within your body tags
-3. Add your desired login services `meteor add accounts-ui accounts-facebook`
+3. Add your desired login services `meteor add accounts-facebook` (currently during beta accounts-password is added by the package, this will be removed from the package so that it can be added only by user choice, later)
 
 * Note: MRC is intended for a blank Meteor application
 
