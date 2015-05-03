@@ -38,7 +38,7 @@ Meteor.publish('usernames', function () {
 
 // user status
 Meteor.publish("userStatus", function() {
-  return Meteor.users.find({ "status.online": true });
+	return Meteor.users.find({ "status.online": true }, {fields: {"status.online": 1, "status.idle": 1}});
 });
 
 // allow sending messages

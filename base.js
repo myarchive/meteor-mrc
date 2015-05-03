@@ -14,7 +14,11 @@ Template.mrc_base.onRendered(function () {
 	$(window).resize(function () { renderEnv(); });
 	setTimeout(function () { scrollToBottom(); }, 200);
 	setTimeout(function () { scrollToBottom(); }, 500);
-	if (!Session.get('currRoom')) Session.set('currRoom',Meteor.rooms.findOne({droom:true})._id);
+	if (!Session.get('currRoom')) {
+		var droom = Meteor.rooms.findOne({droom:true});
+		var croom = (droom && droom._id) ? droom._id : null;
+		Session.set('currRoom',croom);
+	}
 	Meteor.call('onConnect', function() {
 		var rooms = Meteor.rooms.find({joined: Meteor.user()._id});
 		var roomids = [];
@@ -22,6 +26,16 @@ Template.mrc_base.onRendered(function () {
 			roomids.push(room._id);
 		});
 		Session.set('myRooms', roomids);
+		if (!Session.get('currRoom')) {
+			var droom = Meteor.rooms.findOne({droom:true});
+			var croom = (droom && droom._id) ? droom._id : null;
+			Session.set('currRoom',croom);
+		}
+	});
+	UserStatus.startMonitor({
+		interval: '10000',
+		threshold: '60000',
+		idleOnBlur: true
 	});
 });
 
@@ -73,41 +87,52 @@ Template.mrc_base.helpers({
 			return false;
 
 		var myrole = (Meteor.user().role) ? Meteor.user().role : 'guest';
+		var mods = (room.mods) ? room.mods : [];
+		var vips = (room.vips) ? room.vips : [];
+		var joined = (room.joined) ? room.joined : [];
 		var skip = [];
 		var html = '';
-		room.mods.forEach(function(mod) {
-			if (room.joined.indexOf(mod) > -1) {
+		mods.forEach(function (mod) {
+			if (joined.indexOf(mod) > -1) {
 				var user = Meteor.users.findOne(mod);
-				//var nick = (user.username) ? user.username : '...';
-				var self = (mod === Meteor.user()._id) ? 'self' : '';
-				var stat = (user.status.idle) ? 'idle' : 'active';
-				var nick = (user.profile && user.profile.name) ? user.profile.name : '...';
-				html += '<p class="mod '+stat+' '+self+'">' + nick + '</p>';
-				skip.push(mod);
+				if (user && user.status && user.status.online) {
+					//var nick = (user.username) ? user.username : '...';
+					var self = (mod === Meteor.user()._id) ? 'self' : '';
+					var stat = (user.status && user.status.idle) ? 'idle' : 'active';
+					var nick = (user.profile && user.profile.name) ? user.profile.name : '...';
+					html += '<p class="mod ' + stat + ' ' + self + '">' + nick + '</p>';
+					skip.push(mod);
+				}
 			}
 		});
-		room.vips.forEach(function(vip) {
-			if (room.joined.indexOf(vip) > -1) {
+		vips.forEach(function (vip) {
+			if (joined.indexOf(vip) > -1) {
 				var user = Meteor.users.findOne(vip);
-				//var nick = (user.username) ? user.username : '...';
-				var self = (vip === Meteor.user()._id) ? 'self' : '';
-				var stat = (user.status.idle) ? 'idle' : 'active';
-				var nick = (user.profile && user.profile.name) ? user.profile.name : '...';
-				html += '<p class="mod '+stat+' '+self+'">' + nick + '</p>';
-				skip.push(vip);
+				if (user && user.status && user.status.online) {
+					//var nick = (user.username) ? user.username : '...';
+					var self = (vip === Meteor.user()._id) ? 'self' : '';
+					var stat = (user.status && user.status.idle) ? 'idle' : 'active';
+					var nick = (user.profile && user.profile.name) ? user.profile.name : '...';
+					html += '<p class="mod ' + stat + ' ' + self + '">' + nick + '</p>';
+					skip.push(vip);
+				}
 			}
-		});		
-		room.joined.forEach(function (uid) {
+		});
+		joined.forEach(function (uid) {
 			if (skip.indexOf(uid) < 0) {
 				var user = Meteor.users.findOne(uid);
-				//var nick = (user.username) ? user.username : '...';
-				var self = (uid === Meteor.user()._id) ? 'self' : '';
-				var stat = (user.status.idle) ? 'idle' : 'active';
-				var nick = (user.profile && user.profile.name) ? user.profile.name : '...';
-				
-				if (myrole === 'guest' || myrole === 'user') var goru = 'usr';
-				else var goru = (user.role) ? 'usr' : 'gue';
-				html += '<p class="'+goru+' '+stat+' '+self+'">' + nick + '</p>';
+				if (user && user.status && user.status.online) {
+					//var nick = (user.username) ? user.username : '...';
+					var self = (uid === Meteor.user()._id) ? 'self' : '';
+					var stat = (user.status && user.status.idle) ? 'idle' : 'active';
+					var nick = (user.profile && user.profile.name) ? user.profile.name : '...';
+
+					if (myrole === 'guest' || myrole === 'user')
+						var goru = 'usr';
+					else
+						var goru = (user.role) ? 'usr' : 'gue';
+					html += '<p class="' + goru + ' ' + stat + ' ' + self + '">' + nick + '</p>';
+				}
 			}
 		});
 		return html;
