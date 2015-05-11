@@ -1,4 +1,8 @@
 Template.registerHelper('mrcShowChats', function () {
+	
+	// Disable chats until adding feature in future version
+	return "";
+	
 	var myroles = (Meteor.user().role) ? Meteor.user().role : 'guest';
 
 	if (myroles !== 'guest')

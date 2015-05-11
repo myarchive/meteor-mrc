@@ -1,4 +1,8 @@
 Template.registerHelper('mrcShowRooms', function () {
+	
+	// Disable rooms until adding feature in future version
+	return "";
+	
 	var myroles = (Meteor.user().role) ? Meteor.user().role : 'guest';
 	var myrooms = []; var rooms = Meteor.rooms.find({joined:Meteor.user()._id});
 	rooms.forEach(function(room) { myrooms.push(room._id); });
