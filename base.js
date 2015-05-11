@@ -49,17 +49,45 @@ Template.mrc_base.helpers({
 		var messages = Meteor.messages.find({room: Session.get('currRoom')}, {sort: {date: 1}});
 		var html = '';
 		messages.forEach(function (msg) {
-			var user = Meteor.users.findOne(msg.sender);
+			var user = Meteor.users.findOne(msg.user);
 			//var nick = user.username;
 			var nick = user.profile.name;
 			var time = new Date(msg.date);
 			var h = (time.getHours() < 10) ? '0' + time.getHours() : time.getHours();
 			var m = (time.getMinutes() < 10) ? '0' + time.getMinutes() : time.getMinutes();
 			
-			var self = (msg.sender === Meteor.user()._id) ? 'self' : 'name';
-			if (myrole === 'guest' || myrole === 'user') var goru = 'usr';
-			else var goru = (user.role) ? 'usr' : 'gue';
-			html += '<p class="'+self+'"><span class="time">' + h + ':' + m + '</span> <span class="'+self+' '+goru+'" alt="'+user.username+'">' + nick + ':</span> ' + msg.message + '</p>';
+			var da = time.getDate(); // Date
+			var da = (da < 10) ? '0'+da : da;
+			var mo = time.getMonth() + 1; // Month (0 based, so add 1)
+			var mo = (mo < 10) ? '0'+mo : mo;
+			var yr = time.getYear() + 1900; // Year (since 1900 so add that)
+
+			if (msg.join) {
+				if (msg.user === Meteor.user()._id)
+					html += '<p class="myjoin"><span class="time">'+yr+'-'+mo+'-'+da+' ' + h + ':' + m + '</span> *** You have joined the room.</p>';
+				else
+					html += '<p class="join"><span class="time">'+yr+'-'+mo+'-'+da+' ' + h + ':' + m + '</span> *** '+nick+' has joined the room.</p>';
+			}			
+			else if (msg.part) {
+				if (msg.user === Meteor.user()._id)
+					html += '<p class="mypart"><span class="time">'+yr+'-'+mo+'-'+da+' ' + h + ':' + m + '</span> *** You have left the room.</p>';
+				else
+					html += '<p class="part"><span class="time">'+yr+'-'+mo+'-'+da+' ' + h + ':' + m + '</span> *** '+nick+' has left the room.</p>';
+			}			
+			else if (msg.quit) {
+				if (msg.user === Meteor.user()._id)
+					html += '<p class="myquit"><span class="time">'+yr+'-'+mo+'-'+da+' ' + h + ':' + m + '</span> *** You have disconnected.</p>';
+				else
+					html += '<p class="quit"><span class="time">'+yr+'-'+mo+'-'+da+' ' + h + ':' + m + '</span> *** '+nick+' has disconnected.</p>';
+			}			
+			else if (msg.message) {
+				var self = (msg.user === Meteor.user()._id) ? 'self' : 'name';
+				if (myrole === 'guest' || myrole === 'user')
+					var goru = 'usr';
+				else
+					var goru = (user.role) ? 'usr' : 'gue';
+				html += '<p class="msg ' + self + '"><span class="time">'+yr+'-'+mo+'-'+da+' ' + h + ':' + m + '</span> <span class="' + self + ' ' + goru + '" alt="' + user.username + '">' + nick + ':</span> ' + msg.message + '</p>';
+			}
 		});
 
 		if (isAtBottom()) {
@@ -164,7 +192,7 @@ Template.mrc_base.events({
 		$('#mrc-input').val('');
 		Meteor.messages.insert({
 			date: new Date(),
-			sender: Meteor.user()._id,
+			user: Meteor.user()._id,
 			room: Session.get('currRoom'),
 			message: message
 		}, function (err) {

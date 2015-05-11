@@ -209,3 +209,16 @@ a { cursor: pointer; }
     width: 16px;
     height: 11px;
 }
+
+#mrc-chatarea > .join {
+	color: #00cc00;
+}
+#mrc-chatarea > .myjoin {
+	color: #009900;
+}
+#mrc-chatarea > .quit {
+	color: #3333ff;
+}
+#mrc-chatarea > .myquit {
+	color: #0000cc;
+}

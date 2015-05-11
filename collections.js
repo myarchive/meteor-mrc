@@ -10,10 +10,13 @@ Meteor.subscribe("rooms", { onReady: function() {
 Meteor.subscribe('usernames');
 Meteor.subscribe('userStatus');
 
+// allow sending messages
 Meteor.messages.allow({
 	insert: function (userId, doc) {
 		// the user must be logged in, and the sender must be self
 		// add room attendance rules here also...
-		return (userId && doc.sender === userId);
+		// join, part, quit, etc. can not be sent by user rules here...
+		// validate message format, etc. also...
+		return (userId && doc.user === userId);
 	}
 });

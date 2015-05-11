@@ -46,7 +46,9 @@ Meteor.messages.allow({
 	insert: function (userId, doc) {
 		// the user must be logged in, and the sender must be self
 		// add room attendance rules here also...
-		return (userId && doc.sender === userId);
+		// join, part, quit, etc. can not be sent by user rules here...
+		// validate message format, etc. also...
+		return (userId && doc.user === userId);
 	}
 });
 
@@ -84,10 +86,32 @@ Meteor.users.after.update(function (userId, doc, fieldNames, modifier, options) 
 	Meteor.rooms.update({aroom: true}, {$set: {mods: owners, vips: adminw}});
 }, {fetchPrevious: false});
 
+// Watch users online/offline
+Meteor.users.find({"status.online": true}).observe({
+	added: function (user) {
+		// id just came online
+		var droom = Meteor.rooms.findOne({droom:true})._id;
+		Meteor.messages.insert({ date: new Date(), room: droom, join: true, user: user._id });
+		// later will need to do on joins, server status window, etc. like IRC
+	},
+	removed: function (user) {
+		// id just went offline
+		var droom = Meteor.rooms.findOne({droom:true})._id;
+		Meteor.messages.insert({ date: new Date(), room: droom, quit: true, user: user._id });
+	}
+});
 
+/*
 
+{
+  "_id": "WFQWjspkLLh5tA5eE",
+  "date": { "$date": 1430370125000.000000 },
+  "user": "9umsboCFJPHQEt9dH",
+  "room": "G5tmz4aZrMqLBdLbx",
+  "message": "@owner @ali jhsdhjkhdkjfh"
+}
 
-
+ */
 
 
 
