@@ -1,3 +1,5 @@
+
+
 Template.registerHelper('mrcLoadBase', function () {
 	if (Meteor.user())
 		return (!Meteor.user().profile || !Meteor.user().username) ? "mrc_newuser" : "mrc_base";
@@ -36,7 +38,7 @@ Template.mrc_base.onRendered(function () {
 		interval: '10000',
 		threshold: '60000',
 		idleOnBlur: true
-	});
+	});	
 });
 
 Template.mrc_base.helpers({
@@ -109,7 +111,6 @@ Template.mrc_base.helpers({
 	'roomUsers': function () {
 		if (!Session.get('currRoom'))
 			return false;
-		
 		var room = Meteor.rooms.findOne(Session.get('currRoom'));		
 		if (!room)
 			return false;
@@ -124,11 +125,11 @@ Template.mrc_base.helpers({
 			if (joined.indexOf(mod) > -1) {
 				var user = Meteor.users.findOne(mod);
 				if (user && user.status && user.status.online) {
-					//var nick = (user.username) ? user.username : '...';
 					var self = (mod === Meteor.user()._id) ? 'self' : '';
-					var stat = (user.status && user.status.idle) ? 'idle' : 'active';
+					var stat = (user.status && user.status.idle) ? 'idle' : '';
 					var nick = (user.profile && user.profile.name) ? user.profile.name : '...';
-					html += '<p class="mod ' + stat + ' ' + self + '">' + nick + '</p>';
+					var unam = (user.username) ? user.username : '...';
+					html += '<option value="'+unam+'" class="mod ' + stat + ' ' + self + '">' + nick + '</option>';
 					skip.push(mod);
 				}
 			}
@@ -137,11 +138,11 @@ Template.mrc_base.helpers({
 			if (joined.indexOf(vip) > -1) {
 				var user = Meteor.users.findOne(vip);
 				if (user && user.status && user.status.online) {
-					//var nick = (user.username) ? user.username : '...';
 					var self = (vip === Meteor.user()._id) ? 'self' : '';
 					var stat = (user.status && user.status.idle) ? 'idle' : 'active';
 					var nick = (user.profile && user.profile.name) ? user.profile.name : '...';
-					html += '<p class="mod ' + stat + ' ' + self + '">' + nick + '</p>';
+					var unam = (user.username) ? user.username : '...';
+					html += '<option value="'+unam+'" class="vip ' + stat + ' ' + self + '">' + nick + '</option>';
 					skip.push(vip);
 				}
 			}
@@ -150,7 +151,6 @@ Template.mrc_base.helpers({
 			if (skip.indexOf(uid) < 0) {
 				var user = Meteor.users.findOne(uid);
 				if (user && user.status && user.status.online) {
-					//var nick = (user.username) ? user.username : '...';
 					var self = (uid === Meteor.user()._id) ? 'self' : '';
 					var stat = (user.status && user.status.idle) ? 'idle' : 'active';
 					var nick = (user.profile && user.profile.name) ? user.profile.name : '...';
@@ -159,10 +159,30 @@ Template.mrc_base.helpers({
 						var goru = 'usr';
 					else
 						var goru = (user.role) ? 'usr' : 'gue';
-					html += '<p class="' + goru + ' ' + stat + ' ' + self + '">' + nick + '</p>';
+					var unam = (user.username) ? user.username : '...';
+					html += '<option value="'+unam+'" class="'+goru+' ' + stat + ' ' + self + '">' + nick + '</option>';
 				}
 			}
 		});
+		
+		setTimeout(function () {
+			context.attach('#names', {
+				id: 'namesMenu',
+				data: [
+					{
+						header: 'Actions'
+					},
+					{
+						//icon: 'glyphicon-plus',
+						text: 'Test',
+						action: function () {
+							var n = $('#names').val();
+							console.log(n);
+						}
+					}
+				]
+			});
+		}, 2000);
 		return html;
 	}
 });
@@ -205,6 +225,9 @@ Template.mrc_base.events({
 		var uname = e.target.attributes.alt.value;
 		var input = $('#mrc-input').val();
 		$('#mrc-input').val('@'+uname+' '+input).focus();
+	},
+	'click #mrc-namearea > p': function() {
+		//...
 	}
 });
 

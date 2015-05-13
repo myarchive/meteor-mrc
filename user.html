@@ -13,7 +13,26 @@
 </template>
 
 <template name="editp">
-	Edit Profile Template
+	<form class="form-horizontal" name="mrc_nuform">
+		<fieldset>
+			<!-- Text input-->
+			<div class="form-group">
+				<label class="col-md-4 control-label" for="username">User name</label>  
+				<div class="col-md-6">
+					<input id="username" name="username" type="text" placeholder="jdoe" class="form-control input-md" disabled>
+				</div>
+			</div>
+
+			<!-- Button -->
+			<div class="form-group">
+				<label class="col-md-4 control-label" for="submit"></label>
+				<div class="col-md-5">
+					<button id="submit" name="submit" class="btn btn-primary">Submit</button>
+				</div>
+			</div>
+
+		</fieldset>
+	</form>
 </template>
 
 <template name="prefs">

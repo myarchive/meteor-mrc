@@ -8,9 +8,10 @@ Template.navUser.events({
 	'click #editp': function () {
 		bootbox.dialog({
 			title: "Edit Profile",
-			message: Blaze.toHTMLWithData(Template.editp),
+			message: Blaze.toHTML(Template.editp),
 			onEscape: true,
 			closeButton: true,
+			backdrop: true,
 			buttons: {
 				alert: {
 					label: "Ok",
@@ -60,5 +61,18 @@ Template.navUser.events({
 		Meteor.logout(function () {
 			// callback
 		});
+	},
+});
+
+Template.body.events({
+	'click #username': function () {
+		alert('!!!');
+		
+		$('#username').parent().parent().addClass('has-error');
+		$('#username').after('<span class="help-block erase1">Must submit a support ticket to change this.</span>');
+		setTimeout(function () {
+			$('.erase1').remove();
+			$('#username').parent().parent().removeClass('has-error');
+		}, 3000);
 	}
 });

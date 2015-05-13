@@ -23,6 +23,7 @@ Package.onUse(function(api) {
 	api.use('fortawesome:fontawesome@4.3.0', 'client');
 	api.use('iron:router@1.0.7', 'client');
 	api.use('ephemer:reactive-datatables@1.0.4', 'client');
+	api.use('jchristman:context-menu@1.2.0_1', 'client');
 	
     api.add_files("base.css", "client");
     api.add_files("base.html", "client");

@@ -77,6 +77,7 @@ a { cursor: pointer; }
 #mrc-namearea {
 	background: #ddd;
 	overflow-y: scroll;	
+	padding:0; margin:0;
 }
 
 #mrc-namearea > h1 {
@@ -95,7 +96,111 @@ a { cursor: pointer; }
 	top: 5px; left: 5px;
 	content: "\f198";	
 }
-#mrc-namearea > p {
+
+#mrc-namearea > select {
+	margin: 0;
+	padding: 0;
+	background: #fff;
+}
+
+#mrc-namearea option {
+	padding: 5px 5px 5px 20px;
+}
+#mrc-namearea option.mod {
+	position:relative;
+	background: #ebebff;	
+}
+#mrc-namearea option.vip {
+	position:relative;
+	background: #ecffeb;
+}
+#mrc-namearea option.mod:before {
+	position:absolute;
+	font-family: FontAwesome;
+	top: 3px; left: 3px;
+	content: "@";	
+}
+#mrc-namearea option.vip:before {
+	position:absolute;
+	font-family: FontAwesome;
+	top: 3px; left: 6px;
+	content: "+";	
+}
+
+/*
+#modgroup {
+	background: #ebebff;
+	padding-bottom: 10px;
+}
+#vipgroup {
+	background: #ecffeb;
+	padding-bottom: 10px;
+}
+
+optgroup:before {
+	text-align: center;
+    content: attr(alt);
+    display: block;
+	color: #ddd;
+}
+
+#mrc-namearea > select {
+	margin:0; padding:0;
+}
+
+#mrc-namearea #modgroup > option {
+	margin: 0;
+	padding-left: 20px;
+	position:relative;
+}
+
+#mrc-namearea #modgroup > option:before {
+	position:absolute;
+	font-family: FontAwesome;
+	top: 0px; left: 3px;
+	content: "@";	
+}
+
+#mrc-namearea #vipgroup > option {
+	margin: 0;
+	padding-left: 20px;
+	position:relative;
+}
+
+#mrc-namearea #vipgroup > option:before {
+	position:absolute;
+	font-family: FontAwesome;
+	top: 0px; left: 3px;
+	content: "+";	
+}
+
+#mrc-namearea #guegroup > option {
+	margin: 0;
+	padding-left: 20px;
+	position:relative;
+}
+
+#mrc-namearea #guegroup > option:before {
+	position:absolute;
+	font-family: FontAwesome;
+	top: 0px; left: 3px;
+	content: "";	
+}
+
+#mrc-namearea #guegroup > option.self {
+	color: blue;
+}
+
+#mrc-namearea #guegroup > option.idle {
+	color: grey;
+} */
+
+
+
+
+
+
+/*#mrc-namearea > p {
 	margin: 0;
 	padding: 5px 5px 5px 25px;
 	font-size: 14px;
@@ -135,7 +240,33 @@ a { cursor: pointer; }
 }
 #mrc-namearea > p.self {
 	color: #fff;
-}
+}*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #mrc-leftcol {
 	padding: 50px 0 0 0;

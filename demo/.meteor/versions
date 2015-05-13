@@ -8,7 +8,7 @@ accounts-password@1.1.1
 accounts-twitter@1.0.4
 accounts-ui@1.1.5
 accounts-ui-unstyled@1.1.7
-alisalaah:mrc@0.1.2
+alisalaah:mrc@0.2.0
 autoupdate@1.2.1
 base64@1.0.3
 binary-heap@1.0.3
@@ -41,6 +41,7 @@ iron:location@1.0.7
 iron:middleware-stack@1.0.7
 iron:router@1.0.7
 iron:url@1.0.7
+jchristman:context-menu@1.2.0_1
 jquery@1.11.3_2
 json@1.0.3
 launch-screen@1.0.2
