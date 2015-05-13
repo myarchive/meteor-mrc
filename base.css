@@ -75,7 +75,7 @@ a { cursor: pointer; }
 }
 
 #mrc-namearea {
-	background: #ddd;
+	background: #eee;
 	overflow-y: scroll;	
 	padding:0; margin:0;
 }
@@ -97,121 +97,21 @@ a { cursor: pointer; }
 	content: "\f198";	
 }
 
-#mrc-namearea > select {
-	margin: 0;
-	padding: 0;
-	background: #fff;
-}
-
-#mrc-namearea option {
-	padding: 5px 5px 5px 20px;
-}
-#mrc-namearea option.mod {
-	position:relative;
-	background: #ebebff;	
-}
-#mrc-namearea option.vip {
-	position:relative;
-	background: #ecffeb;
-}
-#mrc-namearea option.mod:before {
-	position:absolute;
-	font-family: FontAwesome;
-	top: 3px; left: 3px;
-	content: "@";	
-}
-#mrc-namearea option.vip:before {
-	position:absolute;
-	font-family: FontAwesome;
-	top: 3px; left: 6px;
-	content: "+";	
-}
-
-/*
-#modgroup {
-	background: #ebebff;
-	padding-bottom: 10px;
-}
-#vipgroup {
-	background: #ecffeb;
-	padding-bottom: 10px;
-}
-
-optgroup:before {
-	text-align: center;
-    content: attr(alt);
-    display: block;
-	color: #ddd;
-}
-
-#mrc-namearea > select {
-	margin:0; padding:0;
-}
-
-#mrc-namearea #modgroup > option {
-	margin: 0;
-	padding-left: 20px;
-	position:relative;
-}
-
-#mrc-namearea #modgroup > option:before {
-	position:absolute;
-	font-family: FontAwesome;
-	top: 0px; left: 3px;
-	content: "@";	
-}
-
-#mrc-namearea #vipgroup > option {
-	margin: 0;
-	padding-left: 20px;
-	position:relative;
-}
-
-#mrc-namearea #vipgroup > option:before {
-	position:absolute;
-	font-family: FontAwesome;
-	top: 0px; left: 3px;
-	content: "+";	
-}
-
-#mrc-namearea #guegroup > option {
-	margin: 0;
-	padding-left: 20px;
-	position:relative;
-}
-
-#mrc-namearea #guegroup > option:before {
-	position:absolute;
-	font-family: FontAwesome;
-	top: 0px; left: 3px;
-	content: "";	
-}
-
-#mrc-namearea #guegroup > option.self {
-	color: blue;
-}
-
-#mrc-namearea #guegroup > option.idle {
-	color: grey;
-} */
-
-
-
-
-
-
-/*#mrc-namearea > p {
+#mrc-namearea > p {
 	margin: 0;
 	padding: 5px 5px 5px 25px;
 	font-size: 14px;
 	position:relative;
+	color: #000;
 }
 #mrc-namearea > p:hover {
-	background: #eee;
 	cursor: pointer;
 }
 #mrc-namearea > p.mod {
-	background: #6666ff;
+	background: #ebebff;
+}
+#mrc-namearea > p:hover {
+	background: #ddd;
 }
 #mrc-namearea > p.mod:before {
 	position:absolute;
@@ -220,7 +120,7 @@ optgroup:before {
 	content: "@";	
 }
 #mrc-namearea > p.vip {
-	background: #9999ff;
+	background: #ecffeb;
 }
 #mrc-namearea > p.vip:before {
 	position:absolute;
@@ -229,18 +129,16 @@ optgroup:before {
 	content: "+";	
 }
 #mrc-namearea > p.gue {
-	background: #ccc;
 }
 #mrc-namearea > p.usr {
-	background: #ddd;
 }
 
 #mrc-namearea > p.idle {
 	color: #999;
 }
 #mrc-namearea > p.self {
-	color: #fff;
-}*/
+	color: #0900ff;
+}
 
 
 

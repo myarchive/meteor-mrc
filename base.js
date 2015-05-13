@@ -1,5 +1,3 @@
-
-
 Template.registerHelper('mrcLoadBase', function () {
 	if (Meteor.user())
 		return (!Meteor.user().profile || !Meteor.user().username) ? "mrc_newuser" : "mrc_base";
@@ -13,15 +11,21 @@ Template.registerHelper('mrcLoadBrand', function () {
 
 Template.mrc_base.onRendered(function () {
 	renderEnv();
-	$(window).resize(function () { renderEnv(); });
-	setTimeout(function () { scrollToBottom(); }, 200);
-	setTimeout(function () { scrollToBottom(); }, 500);
+	$(window).resize(function () {
+		renderEnv();
+	});
+	setTimeout(function () {
+		scrollToBottom();
+	}, 200);
+	setTimeout(function () {
+		scrollToBottom();
+	}, 500);
 	if (!Session.get('currRoom')) {
-		var droom = Meteor.rooms.findOne({droom:true});
+		var droom = Meteor.rooms.findOne({droom: true});
 		var croom = (droom && droom._id) ? droom._id : null;
-		Session.set('currRoom',croom);
+		Session.set('currRoom', croom);
 	}
-	Meteor.call('onConnect', function() {
+	Meteor.call('onConnect', function () {
 		var rooms = Meteor.rooms.find({joined: Meteor.user()._id});
 		var roomids = [];
 		rooms.forEach(function (room) {
@@ -29,16 +33,16 @@ Template.mrc_base.onRendered(function () {
 		});
 		Session.set('myRooms', roomids);
 		if (!Session.get('currRoom')) {
-			var droom = Meteor.rooms.findOne({droom:true});
+			var droom = Meteor.rooms.findOne({droom: true});
 			var croom = (droom && droom._id) ? droom._id : null;
-			Session.set('currRoom',croom);
+			Session.set('currRoom', croom);
 		}
 	});
 	UserStatus.startMonitor({
 		interval: '10000',
 		threshold: '60000',
 		idleOnBlur: true
-	});	
+	});
 });
 
 Template.mrc_base.helpers({
@@ -57,38 +61,38 @@ Template.mrc_base.helpers({
 			var time = new Date(msg.date);
 			var h = (time.getHours() < 10) ? '0' + time.getHours() : time.getHours();
 			var m = (time.getMinutes() < 10) ? '0' + time.getMinutes() : time.getMinutes();
-			
+
 			var da = time.getDate(); // Date
-			var da = (da < 10) ? '0'+da : da;
+			var da = (da < 10) ? '0' + da : da;
 			var mo = time.getMonth() + 1; // Month (0 based, so add 1)
-			var mo = (mo < 10) ? '0'+mo : mo;
+			var mo = (mo < 10) ? '0' + mo : mo;
 			var yr = time.getYear() + 1900; // Year (since 1900 so add that)
 
 			if (msg.join) {
 				if (msg.user === Meteor.user()._id)
-					html += '<p class="myjoin"><span class="time">'+yr+'-'+mo+'-'+da+' ' + h + ':' + m + '</span> *** You have joined the room.</p>';
+					html += '<p class="myjoin"><span class="time">' + yr + '-' + mo + '-' + da + ' ' + h + ':' + m + '</span> *** You have joined the room.</p>';
 				else
-					html += '<p class="join"><span class="time">'+yr+'-'+mo+'-'+da+' ' + h + ':' + m + '</span> *** '+nick+' has joined the room.</p>';
-			}			
+					html += '<p class="join"><span class="time">' + yr + '-' + mo + '-' + da + ' ' + h + ':' + m + '</span> *** ' + nick + ' has joined the room.</p>';
+			}
 			else if (msg.part) {
 				if (msg.user === Meteor.user()._id)
-					html += '<p class="mypart"><span class="time">'+yr+'-'+mo+'-'+da+' ' + h + ':' + m + '</span> *** You have left the room.</p>';
+					html += '<p class="mypart"><span class="time">' + yr + '-' + mo + '-' + da + ' ' + h + ':' + m + '</span> *** You have left the room.</p>';
 				else
-					html += '<p class="part"><span class="time">'+yr+'-'+mo+'-'+da+' ' + h + ':' + m + '</span> *** '+nick+' has left the room.</p>';
-			}			
+					html += '<p class="part"><span class="time">' + yr + '-' + mo + '-' + da + ' ' + h + ':' + m + '</span> *** ' + nick + ' has left the room.</p>';
+			}
 			else if (msg.quit) {
 				if (msg.user === Meteor.user()._id)
-					html += '<p class="myquit"><span class="time">'+yr+'-'+mo+'-'+da+' ' + h + ':' + m + '</span> *** You have disconnected.</p>';
+					html += '<p class="myquit"><span class="time">' + yr + '-' + mo + '-' + da + ' ' + h + ':' + m + '</span> *** You have disconnected.</p>';
 				else
-					html += '<p class="quit"><span class="time">'+yr+'-'+mo+'-'+da+' ' + h + ':' + m + '</span> *** '+nick+' has disconnected.</p>';
-			}			
+					html += '<p class="quit"><span class="time">' + yr + '-' + mo + '-' + da + ' ' + h + ':' + m + '</span> *** ' + nick + ' has disconnected.</p>';
+			}
 			else if (msg.message) {
 				var self = (msg.user === Meteor.user()._id) ? 'self' : 'name';
 				if (myrole === 'guest' || myrole === 'user')
 					var goru = 'usr';
 				else
 					var goru = (user.role) ? 'usr' : 'gue';
-				html += '<p class="msg ' + self + '"><span class="time">'+yr+'-'+mo+'-'+da+' ' + h + ':' + m + '</span> <span class="' + self + ' ' + goru + '" alt="' + user.username + '">' + nick + ':</span> ' + msg.message + '</p>';
+				html += '<p class="msg ' + self + '"><span class="time">' + yr + '-' + mo + '-' + da + ' ' + h + ':' + m + '</span> <span class="' + self + ' ' + goru + '" alt="' + user.username + '">' + nick + ':</span> ' + escapeHtml(msg.message) + '</p>';
 			}
 		});
 
@@ -104,14 +108,14 @@ Template.mrc_base.helpers({
 		var myrole = (Meteor.user().role) ? Meteor.user().role : 'guest';
 		if (myrole !== 'guest') {
 			var room = Meteor.rooms.findOne(Session.get('currRoom')).name;
-			return '<h1>'+room+'</h1>';
+			return '<h1>' + room + '</h1>';
 		}
 		return false;
 	},
 	'roomUsers': function () {
 		if (!Session.get('currRoom'))
 			return false;
-		var room = Meteor.rooms.findOne(Session.get('currRoom'));		
+		var room = Meteor.rooms.findOne(Session.get('currRoom'));
 		if (!room)
 			return false;
 
@@ -129,7 +133,8 @@ Template.mrc_base.helpers({
 					var stat = (user.status && user.status.idle) ? 'idle' : '';
 					var nick = (user.profile && user.profile.name) ? user.profile.name : '...';
 					var unam = (user.username) ? user.username : '...';
-					html += '<option value="'+unam+'" class="mod ' + stat + ' ' + self + '">' + nick + '</option>';
+					html += '<p id="mrcna-' + unam + '" class="mod ' + stat + ' ' + self + '">' + nick + '</p>';
+					mrcnaCM(unam, 'mod');
 					skip.push(mod);
 				}
 			}
@@ -142,7 +147,8 @@ Template.mrc_base.helpers({
 					var stat = (user.status && user.status.idle) ? 'idle' : 'active';
 					var nick = (user.profile && user.profile.name) ? user.profile.name : '...';
 					var unam = (user.username) ? user.username : '...';
-					html += '<option value="'+unam+'" class="vip ' + stat + ' ' + self + '">' + nick + '</option>';
+					html += '<p id="mrcna-' + unam + '" class="vip ' + stat + ' ' + self + '">' + nick + '</p>';
+					mrcnaCM(unam, 'vip');
 					skip.push(vip);
 				}
 			}
@@ -160,29 +166,11 @@ Template.mrc_base.helpers({
 					else
 						var goru = (user.role) ? 'usr' : 'gue';
 					var unam = (user.username) ? user.username : '...';
-					html += '<option value="'+unam+'" class="'+goru+' ' + stat + ' ' + self + '">' + nick + '</option>';
+					html += '<p id="mrcna-' + unam + '" class="' + goru + ' ' + stat + ' ' + self + '">' + nick + '</p>';
+					mrcnaCM(unam, null);
 				}
 			}
 		});
-		
-		setTimeout(function () {
-			context.attach('#names', {
-				id: 'namesMenu',
-				data: [
-					{
-						header: 'Actions'
-					},
-					{
-						//icon: 'glyphicon-plus',
-						text: 'Test',
-						action: function () {
-							var n = $('#names').val();
-							console.log(n);
-						}
-					}
-				]
-			});
-		}, 2000);
 		return html;
 	}
 });
@@ -221,13 +209,10 @@ Template.mrc_base.events({
 			return true;
 		});
 	},
-	'click span.name': function(e) {
+	'click span.name': function (e) {
 		var uname = e.target.attributes.alt.value;
 		var input = $('#mrc-input').val();
-		$('#mrc-input').val('@'+uname+' '+input).focus();
-	},
-	'click #mrc-namearea > p': function() {
-		//...
+		$('#mrc-input').val('@' + uname + ' ' + input).focus();
 	}
 });
 
@@ -249,4 +234,49 @@ function renderEnv() {
 	var h = $(window).height();
 	$('#mrc-chatarea').css('height', h - 90 + 'px').css('top', '50px').css('padding', '0');
 	$('#mrc-namearea').css('height', h - 50 + 'px');
+}
+
+function escapeHtml(unsafe) {
+    return unsafe
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+ }
+
+function mrcnaCM(user, rr) {
+	var items = {};
+	var myrole = (Meteor.user().role) ? Meteor.user().role : 'guest';
+	
+	console.log(myrole+' // '+user+' -> '+rr);
+
+	if (myrole.indexOf('owner') > -1) {
+		if (rr === 'mod') {
+			items['demvip'] = {name: 'Demote to VIP'};
+			items['demusr'] = {name: 'Demote to User'};
+			items['ownsep'] = "-----";
+		}
+	}
+	else if (myrole.indexOf('admin') > -1) {
+		if (rr === 'vip') {
+			items['demusr'] = {name: 'Demote to User'};
+			items['ownsep'] = "-----";
+		}
+	}
+
+	items['test'] = {name: 'Test'};
+	
+	$.contextMenu({
+		selector: '#mrcna-' + user,
+		trigger: 'left',
+		items: items,
+		callback: function (key) {
+			mrcnaCA(key, user);
+		}
+	});
+
+}
+function mrcnaCA(key, user) {
+	console.log(key+' > '+user);
 }
