@@ -18,6 +18,7 @@ Package.onUse(function(api) {
 	api.use('matb33:collection-hooks@0.7.13', ['client','server']);
 	api.use('mizzao:user-status@0.6.4', ['client','server']);
 	
+	api.use('momentjs:moment@2.10.3', 'client');
   	api.use('twbs:bootstrap@3.3.4', 'client');
 	api.use('mizzao:bootboxjs@4.4.0', 'client');
 	api.use('fortawesome:fontawesome@4.3.0', 'client');

@@ -237,36 +237,45 @@ function renderEnv() {
 }
 
 function escapeHtml(unsafe) {
-    return unsafe
-         .replace(/&/g, "&amp;")
-         .replace(/</g, "&lt;")
-         .replace(/>/g, "&gt;")
-         .replace(/"/g, "&quot;")
-         .replace(/'/g, "&#039;");
- }
+	return unsafe
+			.replace(/&/g, "&amp;")
+			.replace(/</g, "&lt;")
+			.replace(/>/g, "&gt;")
+			.replace(/"/g, "&quot;")
+			.replace(/'/g, "&#039;");
+}
 
 function mrcnaCM(user, rr) {
 	var items = {};
 	var myrole = (Meteor.user().role) ? Meteor.user().role : 'guest';
-	
-	console.log(myrole+' // '+user+' -> '+rr);
 
-	if (myrole.indexOf('owner') > -1) {
-		if (rr === 'mod') {
-			items['demvip'] = {name: 'Demote to VIP'};
-			items['demusr'] = {name: 'Demote to User'};
-			items['ownsep'] = "-----";
-		}
+	if (Meteor.user().username === user) {
+		// Self
+		items['whois'] = {name: 'Whoami'};
 	}
-	else if (myrole.indexOf('admin') > -1) {
-		if (rr === 'vip') {
-			items['demusr'] = {name: 'Demote to User'};
-			items['ownsep'] = "-----";
+	else {
+		// Others
+		if (myrole.indexOf('owner') > -1) {
+			if (rr === 'mod') {
+				items['demvip'] = {name: 'Demote to VIP'};
+				items['demusr'] = {name: 'Demote to User'};
+				items['ownsep'] = "-----";
+			}
+			if (rr === 'vip') {
+				items['demusr'] = {name: 'Demote to User'};
+				items['ownsep'] = "-----";
+			}
 		}
+		else if (myrole.indexOf('admin') > -1) {
+			if (rr === 'vip') {
+				items['demusr'] = {name: 'Demote to User'};
+				items['ownsep'] = "-----";
+			}
+		}
+		
+		items['whois'] = {name: 'Whois'};
 	}
 
-	items['test'] = {name: 'Test'};
-	
 	$.contextMenu({
 		selector: '#mrcna-' + user,
 		trigger: 'left',
@@ -275,8 +284,40 @@ function mrcnaCM(user, rr) {
 			mrcnaCA(key, user);
 		}
 	});
-
 }
-function mrcnaCA(key, user) {
-	console.log(key+' > '+user);
+
+function mrcnaCA(key, un) {
+	if (key === 'whois') {
+		var user = Meteor.users.findOne({username: un});
+		console.log(user);
+
+		var html = '<div class="container">';
+		html += '<div class="row"><div class="col-sm-4" style="font-weight: 900;">Username:</div></div class="col-sm-4">' + un + '</div></div>';
+		html += '<div class="row"><div class="col-sm-4" style="font-weight: 900;">Gender:</div></div class="col-sm-4">' + user.profile.gender + '</div></div>';
+
+		if (user.status && user.status.idle) {
+			var lastSeen = moment(user.status.lastActivity).fromNow();
+			html += '<div class="row"><div class="col-sm-4" style="font-weight: 900;">Status:</div></div class="col-sm-4"><span style="color:#FF9900">Idle </span>(' + lastSeen + ')</div></div>';
+		}
+		else {
+			html += '<div class="row"><div class="col-sm-4" style="font-weight: 900;">Status:</div></div class="col-sm-4"><span style="color:#009933">Online</span></div></div>';
+		}
+		html += '</div>';
+
+		bootbox.dialog({
+			title: 'Whois ' + user.profile.name,
+			message: html,
+			onEscape: true,
+			closeButton: true,
+			buttons: {
+				alert: {
+					label: "Ok",
+					className: "btn-primary",
+					callback: function () {
+						bootbox.hideAll();
+					}
+				}
+			}
+		});
+	}
 }
