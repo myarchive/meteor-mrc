@@ -1,9 +1,3 @@
-Template.navUser.helpers({
-	'username': function () {
-		return Meteor.user().profile.name;
-	}
-});
-
 Template.navUser.events({
 	'click #editp': function () {
 		bootbox.dialog({
@@ -62,17 +56,4 @@ Template.navUser.events({
 			// callback
 		});
 	},
-});
-
-Template.body.events({
-	'click #username': function () {
-		alert('!!!');
-		
-		$('#username').parent().parent().addClass('has-error');
-		$('#username').after('<span class="help-block erase1">Must submit a support ticket to change this.</span>');
-		setTimeout(function () {
-			$('.erase1').remove();
-			$('#username').parent().parent().removeClass('has-error');
-		}, 3000);
-	}
 });

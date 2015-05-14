@@ -12,43 +12,17 @@ Template.mrc_newuser.events({
 
 		// Update User
 		var form = getForm();
-		if (form.realname)
-			Meteor.users.update({_id: Meteor.user()._id}, {$set: {"profile.name": form.realname}});
-
-		if (form.gender)
-			Meteor.users.update({_id: Meteor.user()._id}, {$set: {"profile.gender": form.gender}});
-
 		if (form.username)
 			Meteor.call('setUsername', form.username);
-
-		if (form.password)
-			//Accounts.setPassword(Meteor.user()._id, form.password);
-			//Meteor.users.update({_id: Meteor.user()._id}, {$set: {"password": form.password}});
-
-			// Always return false, form disappears live once profile is complete
-			return false;
-	}
-});
-Template.mrc_newuser.helpers({
-	'nameInput': function () {
-		if (!Meteor.user().profile || !Meteor.user().profile.name) {
-			var html = '<div class="form-group"><label class="col-md-4 control-label" for="realname">Real name</label><div class="col-md-6">';
-			html += '<input id="realname" name="realname" type="text" class="form-control input-md" placeholder="John Doe">';
-			html += '</div></div>';
-			return html;
-		}
-		return false;
-	},
-	'gender': function () {
-		if (!Meteor.user().profile || !Meteor.user().profile.gender) {
-			Meteor.call('setGender');
-			var html = '<div class="form-group"><label class="col-md-4 control-label" for="gender">Gender</label><div class="col-md-6">';
-			html += '<label class="radio-inline" for="gender-0"><input type="radio" name="gender" id="gender-0" value="male" checked="checked">Male</label>';
-			html += '<label class="radio-inline" for="gender-1"><input type="radio" name="gender" id="gender-1" value="female">Female</label>';
-			html += '</div></div>';
-			return html;
-		}
-		return false;
+		
+		if (form.realname && form.gender)
+			Meteor.users.update({_id: Meteor.user()._id}, {$set: {"profile.name": form.realname, "profile.gender": form.gender}});
+		else if (form.realname)
+			Meteor.users.update({_id: Meteor.user()._id}, {$set: {"profile.name": form.realname}});
+		else if (form.gender)
+			Meteor.users.update({_id: Meteor.user()._id}, {$set: {"profile.gender": form.gender}});
+		
+		return true;
 	}
 });
 

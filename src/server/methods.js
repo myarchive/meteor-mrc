@@ -1,4 +1,24 @@
 Meteor.methods({
+	claimOwner: function () {
+		var user = Meteor.user();
+		var ownr = Meteor.users.findOne({"roles.server":"owner"});
+		if (ownr)
+			throw new Meteor.Error(403, "Site already has an owner");
+
+		Roles.setUserRoles(user._id, 'owner', 'server');
+		return true;
+	},
+	updateRoles: function (targetUserId, roles, group) {
+		/* var loggedInUser = Meteor.user();
+
+		if (!loggedInUser ||
+				!Roles.userIsInRole(loggedInUser,
+						['manage-users', 'support-staff'], group)) {
+			throw new Meteor.Error(403, "Access denied");
+		} */
+
+		Roles.setUserRoles(targetUserId, roles, group);
+	},
 	setGender: function () {
 		var user = Meteor.users.findOne(this.userId);
 
@@ -42,7 +62,7 @@ Meteor.methods({
 
 		// If not in a room join default
 		if (!Meteor.rooms.findOne({joined: this.userId})) {
-			var room = Meteor.rooms.findOne({droom:true});
+			var room = Meteor.rooms.findOne({droom: true});
 			var ppl = (room.joined) ? room.joined : [];
 			ppl.push(this.userId);
 			Meteor.rooms.update({_id: room._id}, {$set: {joined: ppl}});
@@ -60,7 +80,7 @@ Meteor.methods({
 		var ppl = (room.joined) ? room.joined : [];
 		ppl.push(this.userId);
 		Meteor.rooms.update({_id: room._id}, {$set: {joined: ppl}});
-		
+
 		return true;
 	}
 });

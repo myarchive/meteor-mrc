@@ -1,6 +1,13 @@
 Template.registerHelper('mrcLoadBase', function () {
-	if (Meteor.user())
-		return (!Meteor.user().profile || !Meteor.user().username) ? "mrc_newuser" : "mrc_base";
+	if (Meteor.user()) {
+		if (Meteor.user().banned) {
+			if (Session.get('timer') === 0 || Session.get('timer') !== 0) {
+				if (new Date() < Meteor.user().banned.expires)
+					return (Template["my_banned"]) ? "my_banned" : "mrc_banned";
+			}
+		}
+		return (!Meteor.user().profile || !Meteor.user().profile.name || !Meteor.user().profile.gender || !Meteor.user().username) ? "mrc_newuser" : "mrc_base";
+	}
 	else
 		return (Template["my_login"]) ? "my_login" : "mrc_login";
 });
@@ -9,40 +16,14 @@ Template.registerHelper('mrcLoadBrand', function () {
 	return (Template["my_brand"]) ? "my_brand" : "mrc_brand";
 });
 
-Template.mrc_base.onRendered(function () {
-	renderEnv();
-	$(window).resize(function () {
-		renderEnv();
-	});
-	setTimeout(function () {
-		scrollToBottom();
-	}, 200);
-	setTimeout(function () {
-		scrollToBottom();
-	}, 500);
-	if (!Session.get('currRoom')) {
-		var droom = Meteor.rooms.findOne({droom: true});
-		var croom = (droom && droom._id) ? droom._id : null;
-		Session.set('currRoom', croom);
-	}
-	Meteor.call('onConnect', function () {
-		var rooms = Meteor.rooms.find({joined: Meteor.user()._id});
-		var roomids = [];
-		rooms.forEach(function (room) {
-			roomids.push(room._id);
-		});
-		Session.set('myRooms', roomids);
-		if (!Session.get('currRoom')) {
-			var droom = Meteor.rooms.findOne({droom: true});
-			var croom = (droom && droom._id) ? droom._id : null;
-			Session.set('currRoom', croom);
-		}
-	});
-	UserStatus.startMonitor({
-		interval: '10000',
-		threshold: '60000',
-		idleOnBlur: true
-	});
+Template.registerHelper('mrcBanExpires', function () {
+	var t = Session.get('timer');
+	var exp = Meteor.user().banned.expires;
+	return moment(exp).fromNow();
+});
+
+Template.registerHelper('mrcBanReason', function () {
+	return Meteor.user().banned.reason;
 });
 
 Template.mrc_base.helpers({
@@ -132,7 +113,7 @@ Template.mrc_base.helpers({
 					var self = (mod === Meteor.user()._id) ? 'self' : '';
 					var stat = (user.status && user.status.idle) ? 'idle' : '';
 					var nick = (user.profile && user.profile.name) ? user.profile.name : '...';
-					var unam = (user.username) ? user.username : '...';
+					var unam = (user.username) ? user.username : '_';
 					html += '<p id="mrcna-' + unam + '" class="mod ' + stat + ' ' + self + '">' + nick + '</p>';
 					mrcnaCM(unam, 'mod');
 					skip.push(mod);
@@ -146,7 +127,7 @@ Template.mrc_base.helpers({
 					var self = (vip === Meteor.user()._id) ? 'self' : '';
 					var stat = (user.status && user.status.idle) ? 'idle' : 'active';
 					var nick = (user.profile && user.profile.name) ? user.profile.name : '...';
-					var unam = (user.username) ? user.username : '...';
+					var unam = (user.username) ? user.username : '_';
 					html += '<p id="mrcna-' + unam + '" class="vip ' + stat + ' ' + self + '">' + nick + '</p>';
 					mrcnaCM(unam, 'vip');
 					skip.push(vip);
@@ -160,81 +141,29 @@ Template.mrc_base.helpers({
 					var self = (uid === Meteor.user()._id) ? 'self' : '';
 					var stat = (user.status && user.status.idle) ? 'idle' : 'active';
 					var nick = (user.profile && user.profile.name) ? user.profile.name : '...';
+					var unam = (user.username) ? user.username : '_';
 
-					if (myrole === 'guest' || myrole === 'user')
+					if (myrole === 'guest')
 						var goru = 'usr';
 					else
 						var goru = (user.role) ? 'usr' : 'gue';
-					var unam = (user.username) ? user.username : '...';
-					html += '<p id="mrcna-' + unam + '" class="' + goru + ' ' + stat + ' ' + self + '">' + nick + '</p>';
-					mrcnaCM(unam, null);
+					
+					if (user && user.banned && user.banned.expires > new Date()) {
+						if (myrole.indexOf('admin') > -1) {
+							html += '<p id="mrcna-' + unam + '" class="banned">' + nick + '</p>';
+							mrcnaCM(unam, null);
+						}
+					}
+					else {
+						html += '<p id="mrcna-' + unam + '" class="' + goru + ' ' + stat + ' ' + self + '">' + nick + '</p>';
+						mrcnaCM(unam, null);
+					}
 				}
 			}
 		});
 		return html;
 	}
 });
-
-Template.mrc_base.events({
-	'click #brand': function () {
-		var html = (Template["my_brand_pop"]) ? Blaze.toHTMLWithData(Template.my_brand_pop) : Blaze.toHTMLWithData(Template.mrc_brand_pop);
-		bootbox.dialog({
-			title: "About",
-			message: html,
-			onEscape: true,
-			closeButton: true,
-			buttons: {
-				alert: {
-					label: "Ok",
-					className: "btn-primary",
-					callback: function () {
-						bootbox.hideAll();
-					}
-				}
-			}
-		});
-	},
-	'submit #mrc-send': function (event) {
-		event.preventDefault();
-		var message = $('#mrc-input').val();
-		$('#mrc-input').val('');
-		Meteor.messages.insert({
-			date: new Date(),
-			user: Meteor.user()._id,
-			room: Session.get('currRoom'),
-			message: message
-		}, function (err) {
-			if (err)
-				return false;
-			return true;
-		});
-	},
-	'click span.name': function (e) {
-		var uname = e.target.attributes.alt.value;
-		var input = $('#mrc-input').val();
-		$('#mrc-input').val('@' + uname + ' ' + input).focus();
-	}
-});
-
-function isAtBottom() {
-	var out = document.getElementById("mrc-chatarea");
-	if (!out)
-		return false;
-	var isScrolledToBottom = out.scrollHeight - out.clientHeight <= out.scrollTop + 1;
-	return isScrolledToBottom;
-}
-
-function scrollToBottom() {
-	var elm = document.getElementById("mrc-chatarea");
-	var scr = elm.scrollHeight;
-	$('#mrc-chatarea').animate({scrollTop: scr}, 'fast');
-}
-
-function renderEnv() {
-	var h = $(window).height();
-	$('#mrc-chatarea').css('height', h - 90 + 'px').css('top', '50px').css('padding', '0');
-	$('#mrc-namearea').css('height', h - 50 + 'px');
-}
 
 function escapeHtml(unsafe) {
 	return unsafe
@@ -248,6 +177,7 @@ function escapeHtml(unsafe) {
 function mrcnaCM(user, rr) {
 	var items = {};
 	var myrole = (Meteor.user().role) ? Meteor.user().role : 'guest';
+	var info = Meteor.users.findOne({username:user});
 
 	if (Meteor.user().username === user) {
 		// Self
@@ -259,20 +189,44 @@ function mrcnaCM(user, rr) {
 			if (rr === 'mod') {
 				items['demvip'] = {name: 'Demote to VIP'};
 				items['demusr'] = {name: 'Demote to User'};
-				items['ownsep'] = "-----";
 			}
 			if (rr === 'vip') {
+				items['promod'] = {name: 'Promote to MOD'};
 				items['demusr'] = {name: 'Demote to User'};
+			}
+			if (rr === null) {
+				items['provip'] = {name: 'Promote to VIP'};
+			}
+
+			if (info.banned && info.banned.expires > new Date()) {
+				var t = Session.get('timer');
+				items['unban'] = {name: 'UNBAN'};
+				items['ownsep'] = "-----";
+			}
+			else {
+				items['ban'] = {name: 'BAN'};
 				items['ownsep'] = "-----";
 			}
 		}
 		else if (myrole.indexOf('admin') > -1) {
 			if (rr === 'vip') {
 				items['demusr'] = {name: 'Demote to User'};
-				items['ownsep'] = "-----";
+			}
+			if (rr === null) {
+				items['provip'] = {name: 'Promote to VIP'};
+			}
+			
+			if (info.banned && info.banned.expires > new Date()) {
+				var t = Session.get('timer');
+				items['unban'] = {name: 'UNBAN'};
+				items['admsep'] = "-----";
+			}
+			else {
+				items['ban'] = {name: 'BAN'};
+				items['admsep'] = "-----";
 			}
 		}
-		
+
 		items['whois'] = {name: 'Whois'};
 	}
 
@@ -320,4 +274,13 @@ function mrcnaCA(key, un) {
 			}
 		});
 	}
+	
+	if (key === 'ban') {
+		// BAN
+	}
+	
+	if (key === 'unban') {
+		// BAN
+	}
+	
 }

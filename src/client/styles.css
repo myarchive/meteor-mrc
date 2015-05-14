@@ -69,6 +69,27 @@ a { cursor: pointer; }
 	padding: 10px;
 }
 
+#banned {
+	margin: 150px auto;
+	height: 200px;
+	width: 450px;
+	background: #eee;
+	border: 1px dotted #aaa;
+	position: relative;
+}
+#banned > h1 {
+	padding: 0;
+	margin: 0;
+	text-align: center;
+	border-bottom: 1px solid #444;
+	font-size: 32px;
+	background: #ddd;
+}
+#banned > p {
+	padding: 10px;
+}
+
+
 #mrc-rightcol {
 	padding: 50px 0 0 0;
 	height: 100%;
@@ -138,6 +159,9 @@ a { cursor: pointer; }
 }
 #mrc-namearea > p.self {
 	color: #0900ff;
+}
+#mrc-namearea > p.banned {
+	color: #ffc600;
 }
 
 
@@ -250,4 +274,25 @@ a { cursor: pointer; }
 }
 #mrc-chatarea > .myquit {
 	color: #0000cc;
+}
+
+.bigModal > .modal-dialog {
+    width: 70%;
+}
+
+div#ausers_filter {
+	text-align: center;
+}
+
+div#ausers_filter > label {
+	color: #369;
+}
+
+div#ausers_filter > label > input {
+	margin-left: 20px;
+	margin-bottom: 10px;
+}
+
+td.online {
+	color: #0c0;
 }

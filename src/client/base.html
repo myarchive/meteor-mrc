@@ -2,6 +2,15 @@
 	{{> Template.dynamic template=mrcLoadBase}}
 </template>
 
+<template name="mrc_banned">
+	<div id="banned">
+		<h1>Banned</h1>
+		<p>You have been banned by a site administrator.</p>
+		<p>Reason: {{mrcBanReason}}</p>
+		<p>Expires: {{mrcBanExpires}}</p>
+	</div>
+</template>
+
 <template name="mrc_base">
 	<!-- Header -->
 	<header class="navbar navbar-default navbar-fixed-top navbar-inverse" role="banner">
@@ -19,9 +28,9 @@
 				<ul class="nav navbar-nav">
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
-					{{> Template.dynamic template=mrcShowChats}}
-					{{> Template.dynamic template=mrcShowRooms}}
-					{{> Template.dynamic template=mrcShowAdmin}}
+					{{#if isInRole 'owner,admin' 'server'}}
+						{{> navAdmin}}
+					{{/if}}
 					{{> navUser}}
 				</ul>
 			</nav>
