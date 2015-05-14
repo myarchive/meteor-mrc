@@ -1,5 +1,45 @@
 Meteor.startup(function () {
+	// Setup services from settings
+	var services = Meteor.settings.services;
+	if (services) {
+		for (var k in services) {
+			var svc = {};
+			if (services.hasOwnProperty(k)) {
+				svc['service'] = k;
+				for (var i in services[k]) {
+					if (services[k].hasOwnProperty(i)) {
+						svc[i] = services[k][i];
+					}
+				}
+			}
+			Accounts.loginServiceConfiguration.remove({service: svc['service']});
+			Accounts.loginServiceConfiguration.insert(svc);
+		}
+	}
+	
+	// Setup Kadira if specified
+	var kadira = Meteor.settings.kadira;
+	if (kadira) {
+		Kadira.connect(kadira.appId, kadira.secret);
+	}
 });
+
+Accounts.onCreateUser(function (options, user) {
+	if (Meteor.users.find({"roles.server":"owner"}).count() === 0)
+		Meteor.setTimeout(function(){checkOwner(user._id)},1000);
+	
+	if (options.profile)
+		user.profile = options.profile;
+	
+	return user;
+});
+
+function checkOwner(id) {
+	var user = Meteor.users.findOne(id);
+	if (Meteor.settings.owner === user.registered_emails[0].address)
+		Roles.addUsersToRoles(id, 'owner', 'server');
+}
+
 
 
 // analytics.page('page name')
@@ -7,69 +47,3 @@ Meteor.startup(function () {
 //  eventName: "Wine Tasting",
 //  couponValue: 50,
 //});
-
-// if(Meteor.isClient && Meteor.settings === undefined) Meteor.settings = {};
-
-/*
- 
-Accounts.loginServiceConfiguration.remove({
-    service: 'google'
-});
- 
-Accounts.loginServiceConfiguration.remove({
-    service: 'facebook'
-});
- 
-Accounts.loginServiceConfiguration.remove({
-    service: 'twitter'
-});
- 
-Accounts.loginServiceConfiguration.remove({
-    service: 'github'
-});
- 
-if (isProdEnv()) {
-    Accounts.loginServiceConfiguration.insert({
-        service: 'github',
-        clientId: '00000',
-        secret: '00000'
-    });
-    Accounts.loginServiceConfiguration.insert({
-        service: 'twitter',
-        consumerKey: '00000',
-        secret: '00000'
-    });
-    Accounts.loginServiceConfiguration.insert({
-        service: 'google',
-        appId: '00000',
-        secret: '00000'
-    });
-    Accounts.loginServiceConfiguration.insert({
-        service: 'facebook',
-        appId: '00000',
-        secret: '00000'
-    });
-} else {
-    // dev environment
-    Accounts.loginServiceConfiguration.insert({
-        service: 'github',
-        clientId: '11111',
-        secret: '11111'
-    });
-    Accounts.loginServiceConfiguration.insert({
-        service: 'twitter',
-        consumerKey: '11111',
-        secret: '11111'
-    });
-    Accounts.loginServiceConfiguration.insert({
-        service: 'google',
-        clientId: '11111',
-        secret: '11111'
-    });
-    Accounts.loginServiceConfiguration.insert({
-        service: 'facebook',
-        appId: '11111',
-        secret: '11111'
-    });
-}
- */

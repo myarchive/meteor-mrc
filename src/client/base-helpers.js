@@ -3,13 +3,22 @@ Template.registerHelper('mrcLoadBase', function () {
 		if (Meteor.user().banned) {
 			if (Session.get('timer') === 0 || Session.get('timer') !== 0) {
 				if (new Date() < Meteor.user().banned.expires)
+					analytics.page('banned');
 					return (Template["my_banned"]) ? "my_banned" : "mrc_banned";
 			}
 		}
-		return (!Meteor.user().profile || !Meteor.user().profile.name || !Meteor.user().profile.gender || !Meteor.user().username) ? "mrc_newuser" : "mrc_base";
+		if (!Meteor.user().profile || !Meteor.user().profile.name || !Meteor.user().profile.gender || !Meteor.user().username) {
+			analytics.page('signup');
+			return "mrc_newuser";
+		} else {
+			analytics.page('base');
+			return "mrc_base";
+		}
 	}
-	else
+	else {
+		analytics.page('login');
 		return (Template["my_login"]) ? "my_login" : "mrc_login";
+	}
 });
 
 Template.registerHelper('mrcLoadBrand', function () {

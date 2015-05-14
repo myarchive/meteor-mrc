@@ -68,6 +68,7 @@ Template.mrc_base.events({
 				}
 			}
 		});
+		analytics.track("Clicked logo");
 	},
 	'submit #mrc-send': function (event) {
 		event.preventDefault();
@@ -83,10 +84,12 @@ Template.mrc_base.events({
 				return false;
 			return true;
 		});
+		analytics.track("Send chatroom message");
 	},
 	'click span.name': function (e) {
 		var uname = e.target.attributes.alt.value;
 		var input = $('#mrc-input').val();
 		$('#mrc-input').val('@' + uname + ' ' + input).focus();
+		analytics.track("Clicked name on name area");
 	}
 });
