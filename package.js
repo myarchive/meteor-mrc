@@ -46,4 +46,5 @@ Package.onUse(function(api) {
 
     api.add_files('src/server/collections.js', 'server');
     api.add_files('src/server/methods.js', 'server');
+    //api.add_files('src/server/startup.js', 'server');
 });
