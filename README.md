@@ -38,3 +38,28 @@ This project is still in development and more will be written when it is made av
 # Contribute
 
 If you wish to help please contact me via Meteor's IRC, Forums or @alicamarata
+
+# Version History
+
+## 0.2.2
+
+- Startup procedure with settings.json
+- Analytics and Kadira implemented
+- Start mod controls like banning
+
+## 0.2.1
+
+- Restructure
+- Use of roles package
+- Signup procedure
+- Extra permissions and hooks on collections
+
+## 0.2
+
+- Basic functionality
+- Admin area
+- Edit profile area (in progress)
+
+## 0.1
+
+- Initial version and start of code
