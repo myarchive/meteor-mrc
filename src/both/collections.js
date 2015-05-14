@@ -40,18 +40,18 @@ Meteor.users.after.update(function (userId, doc, fieldNames, modifier, options) 
 
 	var users = Meteor.users.find({});
 	users.forEach(function (user) {
-		if (!user.role)
+		if (!Roles.userIsInRole(user._id, ['owner','admin','staff','user'], 'server'))
 			guests.push(user._id);
 		else {
-			if (user.role.indexOf('owner') > -1)
+			if (Roles.userIsInRole(user._id, 'owner', 'server'))
 				owners.push(user._id);
-			if (user.role.indexOf('admin') > -1)
+			if (Roles.userIsInRole(user._id, ['owner','admin'], 'server'))
 				admins.push(user._id);
-			if (user.role.indexOf('admin') > -1 && user.role.indexOf('owner') === 0)
+			if (Roles.userIsInRole(user._id, 'admin', 'server'))
 				adminw.push(user._id);
-			if (user.role.indexOf('staff') > -1 && user.role.indexOf('admin') === 0  && user.role.indexOf('owner') === 0)
+			if (Roles.userIsInRole(user._id, 'staff', 'server'))
 				staffs.push(user._id);
-			if (user.role.indexOf('user') > -1)
+			if (Roles.userIsInRole(user._id, 'user', 'server'))
 				ausers.push(user._id);
 		}
 	});

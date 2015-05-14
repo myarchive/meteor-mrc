@@ -128,22 +128,22 @@ a { cursor: pointer; }
 #mrc-namearea > p:hover {
 	cursor: pointer;
 }
-#mrc-namearea > p.mod {
+#mrc-namearea > p.mods {
 	background: #ebebff;
 }
 #mrc-namearea > p:hover {
 	background: #ddd;
 }
-#mrc-namearea > p.mod:before {
+#mrc-namearea > p.mods:before {
 	position:absolute;
 	font-family: FontAwesome;
 	top: 5px; left: 5px;
 	content: "@";	
 }
-#mrc-namearea > p.vip {
+#mrc-namearea > p.vips {
 	background: #ecffeb;
 }
-#mrc-namearea > p.vip:before {
+#mrc-namearea > p.vips:before {
 	position:absolute;
 	font-family: FontAwesome;
 	top: 4px; left: 8px;

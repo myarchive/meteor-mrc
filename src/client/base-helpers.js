@@ -86,80 +86,41 @@ Template.mrc_base.helpers({
 		return html;
 	},
 	'roomName': function () {
-		var myrole = (Meteor.user().role) ? Meteor.user().role : 'guest';
-		if (myrole !== 'guest') {
+		if (Roles.userIsInRole(Meteor.user()._id, ['owner', 'admin', 'staff', 'user'], 'server')) {
 			var room = Meteor.rooms.findOne(Session.get('currRoom')).name;
 			return '<h1>' + room + '</h1>';
 		}
 		return false;
 	},
 	'roomUsers': function () {
-		if (!Session.get('currRoom'))
+		if (!Session.get('currRoom') || !Meteor.rooms.findOne(Session.get('currRoom')))
 			return false;
 		var room = Meteor.rooms.findOne(Session.get('currRoom'));
-		if (!room)
-			return false;
-
-		var myrole = (Meteor.user().role) ? Meteor.user().role : 'guest';
-		var mods = (room.mods) ? room.mods : [];
-		var vips = (room.vips) ? room.vips : [];
-		var joined = (room.joined) ? room.joined : [];
+		var loop = ['mods', 'vips', 'joined'];
 		var skip = [];
 		var html = '';
-		mods.forEach(function (mod) {
-			if (joined.indexOf(mod) > -1) {
-				var user = Meteor.users.findOne(mod);
-				if (user && user.status && user.status.online) {
-					var self = (mod === Meteor.user()._id) ? 'self' : '';
-					var stat = (user.status && user.status.idle) ? 'idle' : '';
-					var nick = (user.profile && user.profile.name) ? user.profile.name : '...';
-					var unam = (user.username) ? user.username : '_';
-					html += '<p id="mrcna-' + unam + '" class="mod ' + stat + ' ' + self + '">' + nick + '</p>';
-					mrcnaCM(unam, 'mod');
-					skip.push(mod);
-				}
-			}
-		});
-		vips.forEach(function (vip) {
-			if (joined.indexOf(vip) > -1) {
-				var user = Meteor.users.findOne(vip);
-				if (user && user.status && user.status.online) {
-					var self = (vip === Meteor.user()._id) ? 'self' : '';
-					var stat = (user.status && user.status.idle) ? 'idle' : 'active';
-					var nick = (user.profile && user.profile.name) ? user.profile.name : '...';
-					var unam = (user.username) ? user.username : '_';
-					html += '<p id="mrcna-' + unam + '" class="vip ' + stat + ' ' + self + '">' + nick + '</p>';
-					mrcnaCM(unam, 'vip');
-					skip.push(vip);
-				}
-			}
-		});
-		joined.forEach(function (uid) {
-			if (skip.indexOf(uid) < 0) {
-				var user = Meteor.users.findOne(uid);
-				if (user && user.status && user.status.online) {
-					var self = (uid === Meteor.user()._id) ? 'self' : '';
-					var stat = (user.status && user.status.idle) ? 'idle' : 'active';
-					var nick = (user.profile && user.profile.name) ? user.profile.name : '...';
-					var unam = (user.username) ? user.username : '_';
 
-					if (myrole === 'guest')
-						var goru = 'usr';
-					else
-						var goru = (user.role) ? 'usr' : 'gue';
-					
-					if (user && user.banned && user.banned.expires > new Date()) {
-						if (myrole.indexOf('admin') > -1) {
-							html += '<p id="mrcna-' + unam + '" class="banned">' + nick + '</p>';
-							mrcnaCM(unam, null);
+		loop.forEach(function (rank) {
+			var users = room[rank];
+			users.forEach(function (uid) {
+				if (skip.indexOf(uid) < 0) {
+					var user = Meteor.users.findOne(uid);
+					if (user && user.status && user.status.online) {
+						var self = (uid === Meteor.user()._id) ? 'self' : '';
+						var stat = (user.status && user.status.idle) ? 'idle' : '';
+						var name = (user.profile && user.profile.name) ? user.profile.name : '...';
+						var unam = (user.username) ? user.username : '_';
+						if (user && user.banned && user.banned.expires > new Date() && Roles.userIsInRole(Meteor.user()._id, ['owner', 'admin', 'staff'], 'server')) {
+							html += '<p id="mrcna-' + unam + '" class="banned">' + name + '</p>';
+							mrcnaCM(unam, room._id);
+						} else {
+							html += '<p id="mrcna-' + unam + '" class="' + rank + ' ' + stat + ' ' + self + '">' + name + '</p>';
+							mrcnaCM(unam, room._id);
 						}
-					}
-					else {
-						html += '<p id="mrcna-' + unam + '" class="' + goru + ' ' + stat + ' ' + self + '">' + nick + '</p>';
-						mrcnaCM(unam, null);
+						skip.push(uid);
 					}
 				}
-			}
+			});
 		});
 		return html;
 	}
@@ -174,68 +135,41 @@ function escapeHtml(unsafe) {
 			.replace(/'/g, "&#039;");
 }
 
-function mrcnaCM(user, rr) {
+function mrcnaCM(unam, rid) {
 	var items = {};
-	var myrole = (Meteor.user().role) ? Meteor.user().role : 'guest';
-	var info = Meteor.users.findOne({username:user});
-
-	if (Meteor.user().username === user) {
-		// Self
-		items['whois'] = {name: 'Whoami'};
-	}
-	else {
-		// Others
-		if (myrole.indexOf('owner') > -1) {
-			if (rr === 'mod') {
-				items['demvip'] = {name: 'Demote to VIP'};
-				items['demusr'] = {name: 'Demote to User'};
-			}
-			if (rr === 'vip') {
-				items['promod'] = {name: 'Promote to MOD'};
-				items['demusr'] = {name: 'Demote to User'};
-			}
-			if (rr === null) {
-				items['provip'] = {name: 'Promote to VIP'};
-			}
-
-			if (info.banned && info.banned.expires > new Date()) {
-				var t = Session.get('timer');
-				items['unban'] = {name: 'UNBAN'};
-				items['ownsep'] = "-----";
-			}
-			else {
-				items['ban'] = {name: 'BAN'};
-				items['ownsep'] = "-----";
+	var user = Meteor.users.findOne({username:unam});
+	var room = Meteor.rooms.findOne({_id:rid});
+	var srvr = (room.droom || room.sroom || room.aroom) ? true : false;
+	
+	if (!Meteor.user()._id === user._id) {
+		// Self...
+		items['whois'] = {name: 'WhoAmI'};
+	} else if (srvr) {
+		// Server room...
+		if (Roles.userIsInRole(Meteor.user()._id, 'owner', 'server')) {
+			// You are owner..
+			if (Roles.userIsInRole(user._id, 'admin', 'server')) {
+				// They are admin..
 			}
 		}
-		else if (myrole.indexOf('admin') > -1) {
-			if (rr === 'vip') {
-				items['demusr'] = {name: 'Demote to User'};
-			}
-			if (rr === null) {
-				items['provip'] = {name: 'Promote to VIP'};
-			}
-			
-			if (info.banned && info.banned.expires > new Date()) {
-				var t = Session.get('timer');
-				items['unban'] = {name: 'UNBAN'};
-				items['admsep'] = "-----";
-			}
-			else {
-				items['ban'] = {name: 'BAN'};
-				items['admsep'] = "-----";
-			}
+		if (Roles.userIsInRole(Meteor.user()._id, 'admin', 'server')) {
+			// You are admin..
 		}
-
-		items['whois'] = {name: 'Whois'};
+		if (Roles.userIsInRole(Meteor.user()._id, 'staff', 'server')) {
+			// You are staff..
+		}
+		items['whois'] = {name: 'WhoIs'};
+	} else {
+		// Custom room...
+		items['whois'] = {name: 'WhoIs'};
 	}
 
 	$.contextMenu({
-		selector: '#mrcna-' + user,
+		selector: '#mrcna-' + unam,
 		trigger: 'left',
 		items: items,
 		callback: function (key) {
-			mrcnaCA(key, user);
+			mrcnaCA(key, unam);
 		}
 	});
 }
@@ -274,13 +208,13 @@ function mrcnaCA(key, un) {
 			}
 		});
 	}
-	
+
 	if (key === 'ban') {
 		// BAN
 	}
-	
+
 	if (key === 'unban') {
 		// BAN
 	}
-	
+
 }
