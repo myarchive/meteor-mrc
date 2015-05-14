@@ -1,0 +1,46 @@
+{
+	"services": {
+		"facebook": {
+			"appId": "xxx",
+			"secret": "xxx"
+
+		},
+		"google": {
+			"clientId": "xxx",
+			"secret": "xxx"
+		},
+		"twitter": {
+			"consumerKey": "xxx",
+			"secret": "xxx"
+		},
+		"github": {
+			"clientId": "xxx",
+			"secret": "xxx"
+		},
+		"meteor-developer": {
+			"clientId": "xxx",
+			"secret": "xxx"
+		}
+	},
+	"kadira": {
+		"appId": "xxx",
+		"secret": "xxx"
+	},
+	"owner": {
+		"email": "your@email.com",
+		"name": "John Doe",
+		"username": "jdoe",
+		"gender": "male"
+	},
+	"public": {
+		"analyticsSettings": {
+			"Google Analytics" : {"trackingId": "UA-XXXXXXX-Y"},
+			"Mixpanel"         : {"token":  "your token", "people": true},
+			"KISSmetrics"      : {"apiKey": "your api key"},
+			"UserVoice"        : {"apiKey": "your api key"},
+			"Sentry"           : {"config": "your config key"},
+			"Segment.io"       : {"apiKey": "your api key"},
+			"Keen IO"          : {"projectId": "your project id", "writeKey": "your write key"}
+		}	
+	}
+}
