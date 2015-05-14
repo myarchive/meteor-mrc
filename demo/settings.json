@@ -26,12 +26,7 @@
 		"appId": "xxx",
 		"secret": "xxx"
 	},
-	"owner": {
-		"email": "your@email.com",
-		"name": "John Doe",
-		"username": "jdoe",
-		"gender": "male"
-	},
+	"owner": "your@email.com",
 	"public": {
 		"analyticsSettings": {
 			"Google Analytics" : {"trackingId": "UA-XXXXXXX-Y"},
