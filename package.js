@@ -20,7 +20,6 @@ Package.onUse(function (api) {
 	api.use('fortawesome:fontawesome@4.3.0', 'client');
 	api.use('ephemer:reactive-datatables@1.0.4', 'client');
 	api.use('alisalaah:jquery-contextmenu@1.6.6', 'client');
-	api.use('okgrow:analytics@0.2.5', 'client');
 
 	api.add_files('src/both/collections.js', ['client', 'server']);
 

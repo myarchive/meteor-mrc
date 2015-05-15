@@ -9,11 +9,12 @@ Meteor Relay Chat (MRC) is a Meteor chat implementation modeled after IRC.  This
 1. Create a new meteor project and go to it via `meteor create projectName | cd projectName`
 2. Add the MRC package via `meteor add alisalaah:mrc`
 3. Remove autopublish and insecure packages `meteor remove autopublish insecure`
-4. Add your desired account services `meteor add accounts-password accounts-facebook` (accounts-meld only works between facebook, google and github)
-5. Optionally add Kadira for performance monitoring `meteor add meteorhacks:kadira`
-6. Add `{{> mrc}}` within your body tags
-7. Create a settings.json (see instructions below)
-8. Start your application using the json `meteor --settings settings.json`
+4. Add your desired account services (at least 1 required), ie: `meteor add accounts-password accounts-facebook`
+5. Add `{{> mrc}}` within your body tags
+6. Create a settings.json (see instructions below)
+a. Optionally add Kadira for performance monitoring `meteor add meteorhacks:kadira` (keys in settings.json per example)
+b. Optionally add Analytics (okgrow) for statistics `meteor add okgrow:analytics` (keys in settings.json per example)
+7. Start your application using the json `meteor --settings settings.json`
 
 * Note: MRC is intended for a blank Meteor application.  See the Demo for a functional example.
 
