@@ -1,4 +1,4 @@
-Template.ausers.helpers({
+Template.ausr.helpers({
 	allUsers: function () {
 		var t = Session.get('timer');
 		var index = 0;
@@ -41,7 +41,7 @@ Template.ausers.helpers({
 
 		setTimeout(function () {
 			$('[data-toggle="tooltip"]').tooltip({html: true});
-			$('table#ausers').DataTable({
+			$('table#ausr').DataTable({
 				"bPaginate": false,
 				"bInfo": false,
 				"bLengthChange": false
