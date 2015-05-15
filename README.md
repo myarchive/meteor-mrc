@@ -4,6 +4,12 @@ This project is in beta! Please consider helping to bring it to reality faster..
 
 Meteor Relay Chat (MRC) is a Meteor chat implementation modeled after IRC.  This is a complete solution and is customizable but not intended as an embedded solution in to an existing site.
 
+# Example
+
+Demo: http://mrc.meteor.com
+
+* Note: The code for the demo is inside this github under the `demo` folder.
+
 # Installation
 
 1. Create a new meteor project and go to it via `meteor create projectName | cd projectName`
@@ -15,12 +21,6 @@ Meteor Relay Chat (MRC) is a Meteor chat implementation modeled after IRC.  This
 7. Start your application using the json `meteor --settings settings.json`
 
 * Note: MRC is intended for a blank Meteor application.  See the Demo for a functional example.
-
-# Example
-
-Demo: http://mrc.meteor.com
-
-* Note: The code for the demo is inside this github under the `demo` folder.
 
 # Settings.json
 
