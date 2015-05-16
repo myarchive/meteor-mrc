@@ -78,9 +78,9 @@ Meteor.publish('usernames', function () {
 // user status
 Meteor.publish("userStatus", function () {
 	if (Roles.userIsInRole(this.userId, ['owner', 'admin'], 'server')) {
-		return Meteor.users.find({"status.online": true}, {fields: {"status.online": 1, "status.idle": 1, "status.lastActivity": 1, "status.lastLogin": 1, "banned.expires": 1, "banned.reason": 1}});
+		return Meteor.users.find({"status.online": true}, {fields: {"status.online": 1, "status.idle": 1, "status.lastActivity": 1, "status.lastLogin": 1, "banned.expires": 1, "banned.reason": 1, "muted": 1}});
 	} else {
-		return Meteor.users.find({"status.online": true}, {fields: {"status.online": 1, "status.idle": 1, "status.lastActivity": 1, "banned.expires": 1, "banned.reason": 1}});
+		return Meteor.users.find({"status.online": true}, {fields: {"status.online": 1, "status.idle": 1, "status.lastActivity": 1, "banned.expires": 1, "banned.reason": 1, "muted": 1}});
 	}
 });
 

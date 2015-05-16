@@ -8,17 +8,6 @@ Meteor.methods({
 		Roles.setUserRoles(user._id, 'owner', 'server');
 		return true;
 	},
-	updateRoles: function (targetUserId, roles, group) {
-		/* var loggedInUser = Meteor.user();
-
-		if (!loggedInUser ||
-				!Roles.userIsInRole(loggedInUser,
-						['manage-users', 'support-staff'], group)) {
-			throw new Meteor.Error(403, "Access denied");
-		} */
-
-		Roles.setUserRoles(targetUserId, roles, group);
-	},
 	setGender: function () {
 		var user = Meteor.users.findOne(this.userId);
 
@@ -82,5 +71,121 @@ Meteor.methods({
 		Meteor.rooms.update({_id: room._id}, {$set: {joined: ppl}});
 
 		return true;
+	},
+	updateRoles: function (targ, role) {
+		var self = Meteor.user()._id;
+		var opts = ['admin','staff','user'];
+
+		if (opts.indexOf(role) < 0)
+			throw new Meteor.Error(403, "Invalid role option");
+
+		if (role === 'admin' && !isOwner(self))
+			throw new Meteor.Error(403, "Access denied");
+		
+		if (role === 'staff' && !hasAdmin(self))
+			throw new Meteor.Error(403, "Access denied");
+		
+		if (role === 'user' && !hasStaff(self))
+			throw new Meteor.Error(403, "Access denied");
+
+		if (level(targ) >= level(self))
+			throw new Meteor.Error(403, "Access denied*");
+
+		Roles.setUserRoles(targ, role, 'server');
+	},
+	toggleMute: function (targ) {
+		var self = Meteor.user()._id;
+		
+		if (!hasStaff(self))
+			throw new Meteor.Error(403, "Access denied");
+		
+		if (level(targ) >= level(self))
+			throw new Meteor.Error(403, "Access denied*");
+		
+		var targi = Meteor.users.findOne(targ);
+		var toggle = (targi && targi.muted) ? false : true;
+		
+		Meteor.users.update(targ, {$set: {muted:toggle}});
+	},
+	ban: function (targ, duration, message) {
+		var self = Meteor.user()._id;
+		
+		if (!hasStaff(self))
+			throw new Meteor.Error(403, "Access denied");
+		
+		if (hasStaff(targ))
+			throw new Meteor.Error(403, "Access denied*");
+		
+		if (isBanned(targ))
+			throw new Meteor.Error(403, "User is already banned");
+		
+		
+		var exp = new Date();
+		exp.setTime(new Date().getTime() + (duration * 60 * 1000));
+		
+		Meteor.users.update(targ, {$set: {'banned.expires':exp, 'banned.reason':message, 'by':self}});
+	},
+	unban: function (targ) {
+		var self = Meteor.user()._id;
+		
+		if (!hasStaff(self))
+			throw new Meteor.Error(403, "Access denied");
+		
+		if (level(targ) >= level(self))
+			throw new Meteor.Error(403, "Access denied*");
+		
+		if (!isBanned(targ))
+			throw new Meteor.Error(403, "User is not banned");
+		
+		Meteor.users.update(targ, {$set: {'banned.expires': new Date(), 'banned.unbanned': self}});
 	}
 });
+
+this.level = function(id) {
+	if (isOwner(id))
+		return 4;
+	if (isAdmin(id))
+		return 3;
+	if (isStaff(id))
+		return 2;
+	if (isUser(id))
+		return 1;
+	return 0;
+};
+
+this.hasAdmin = function(id) {
+	return Roles.userIsInRole(id, ['owner','admin'], 'server');
+};
+
+this.hasStaff = function(id) {
+	return Roles.userIsInRole(id, ['owner','admin','staff'], 'server');
+};
+
+this.isOwner = function(id) {
+	return Roles.userIsInRole(id, 'owner', 'server');
+};
+
+this.isAdmin = function(id) {
+	return Roles.userIsInRole(id, 'admin', 'server');
+};
+
+this.isStaff = function(id) {
+	return Roles.userIsInRole(id, 'staff', 'server');
+};
+
+this.isUser = function(id) {
+	return Roles.userIsInRole(id, 'user', 'server');
+};
+
+this.isGuest = function(id) {
+	if (Roles.userIsInRole(id, ['owner','admin','staff','user'], 'server'))
+		return false;
+	return true
+};
+
+this.isBanned = function(id) {
+	var user = Meteor.users.findOne(id);
+	if (!user.banned || !user.banned.expires || user.banned.expires < new Date())
+		return false;
+	return true;
+};

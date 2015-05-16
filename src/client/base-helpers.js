@@ -1,11 +1,10 @@
 Template.registerHelper('mrcLoadBase', function () {
 	if (Meteor.user()) {
-		if (Meteor.user().banned) {
-			if (Session.get('timer') === 0 || Session.get('timer') !== 0) {
-				if (new Date() < Meteor.user().banned.expires)
-					analytics.page('banned');
-					return (Template["my_banned"]) ? "my_banned" : "mrc_banned";
-			}
+		if (isBanned(Meteor.user()._id)) {
+			var t = Session.get('timer'); t = t; // hack to make reactive
+			if (new Date() < Meteor.user().banned.expires)
+				analytics.page('banned');
+			return (Template["my_banned"]) ? "my_banned" : "mrc_banned";
 		}
 		if (!Meteor.user().profile || !Meteor.user().profile.name || !Meteor.user().profile.gender || !Meteor.user().username) {
 			analytics.page('signup');
@@ -104,6 +103,8 @@ Template.mrc_base.helpers({
 	'roomUsers': function () {
 		if (!Session.get('currRoom') || !Meteor.rooms.findOne(Session.get('currRoom')))
 			return false;
+		var t = Session.get('timer');
+		t = t;
 		var room = Meteor.rooms.findOne(Session.get('currRoom'));
 		var loop = ['mods', 'vips', 'joined'];
 		var skip = [];
@@ -121,10 +122,13 @@ Template.mrc_base.helpers({
 						var unam = (user.username) ? user.username : '_';
 						if (user && user.banned && user.banned.expires > new Date() && Roles.userIsInRole(Meteor.user()._id, ['owner', 'admin', 'staff'], 'server')) {
 							html += '<p id="mrcna-' + unam + '" class="banned">' + name + '</p>';
-							mrcnaCM(unam, room._id);
+							mrcnaCM(unam, room._id, 'banned');
+						} else if (user && user.muted) {
+							html += '<p id="mrcna-' + unam + '" class="' + rank + '-muted">' + name + '</p>';
+							mrcnaCM(unam, room._id, rank + '-muted');
 						} else {
-							html += '<p id="mrcna-' + unam + '" class="' + rank + ' ' + stat + ' ' + self + '">' + name + '</p>';
-							mrcnaCM(unam, room._id);
+							html += '<p id="mrcna-' + unam + '" class="' + rank + '"><span class="' + stat + ' ' + self + '">' + name + '</span></p>';
+							mrcnaCM(unam, room._id, rank);
 						}
 						skip.push(uid);
 					}
@@ -144,28 +148,73 @@ function escapeHtml(unsafe) {
 			.replace(/'/g, "&#039;");
 }
 
-function mrcnaCM(unam, rid) {
+function mrcnaCM(unam, rid, rank) {
+	if ($('#mrcna-' + unam + '.' + rank).length)
+		return false;
+
 	var items = {};
-	var user = Meteor.users.findOne({username:unam});
-	var room = Meteor.rooms.findOne({_id:rid});
-	var srvr = (room.droom || room.sroom || room.aroom) ? true : false;
-	
-	if (!Meteor.user()._id === user._id) {
-		// Self...
+	var user = Meteor.users.findOne({username: unam});
+	var self = Meteor.user()._id;
+	var targ = user._id;
+	var room = Meteor.rooms.findOne({_id: rid});
+	var sero = (room.droom || room.sroom || room.aroom) ? true : false;
+
+	if (self === targ) {
 		items['whois'] = {name: 'WhoAmI'};
-	} else if (srvr) {
-		// Server room...
-		if (Roles.userIsInRole(Meteor.user()._id, 'owner', 'server')) {
-			// You are owner..
-			if (Roles.userIsInRole(user._id, 'admin', 'server')) {
-				// They are admin..
-			}
+	} else if (sero) {
+		if (isOwner(targ) && hasStaff(self)) {
+			items['owner'] = {name: 'OWNER'};
+			items['sep0'] = '-';
 		}
-		if (Roles.userIsInRole(Meteor.user()._id, 'admin', 'server')) {
-			// You are admin..
+		if (isAdmin(targ) && isOwner(self)) {
+			items['demstf'] = {name: 'Demote to Staff'};
+			items['demusr'] = {name: 'Demote to User'};
+			items['sep1'] = '-';
+			if (user.muted)
+				items['mute'] = {name: 'Un-mute User'};
+			else
+				items['mute'] = {name: 'Mute User'};
+			items['sep2'] = '-';
 		}
-		if (Roles.userIsInRole(Meteor.user()._id, 'staff', 'server')) {
-			// You are staff..
+		if (isStaff(targ) && isOwner(self)) {
+			items['proadm'] = {name: 'Promote to Admin'};
+			items['sep3'] = '-';
+		}
+		if (isStaff(targ) && hasAdmin(self)) {
+			items['demusr'] = {name: 'Demote to User'};
+			items['sep4'] = '-';
+			if (user.muted)
+				items['mute'] = {name: 'Un-mute User'};
+			else
+				items['mute'] = {name: 'Mute User'};
+			items['sep5'] = '-';
+		}
+		if (isUser(targ) && isOwner(self)) {
+			items['proadm'] = {name: 'Promote to Admin'};
+		}
+		if (isUser(targ) && hasAdmin(self)) {
+			items['prostf'] = {name: 'Promote to Staff'};
+			items['sep6'] = '-';
+			if (user.muted)
+				items['mute'] = {name: 'Un-mute User'};
+			else
+				items['mute'] = {name: 'Mute User'};
+			items['sep7'] = '-';
+		}
+		if (isGuest(targ) && hasStaff(self)) {
+			items['regusr'] = {name: 'Register as User'};
+			items['sep8'] = '-';
+		}
+		if ((isGuest(targ) || isUser(targ)) && hasStaff(self)) {
+			if (user.muted)
+				items['mute'] = {name: 'Un-mute User'};
+			else
+				items['mute'] = {name: 'Mute User'};
+			if (isBanned(targ))
+				items['unban'] = {name: 'Un-ban User'};
+			else
+				items['ban'] = {name: 'Ban User'};
+			items['sep9'] = '-';
 		}
 		items['whois'] = {name: 'WhoIs'};
 	} else {
@@ -174,22 +223,20 @@ function mrcnaCM(unam, rid) {
 	}
 
 	$.contextMenu({
-		selector: '#mrcna-' + unam,
+		selector: '#mrcna-' + unam + '.' + rank,
 		trigger: 'left',
 		items: items,
 		callback: function (key) {
-			mrcnaCA(key, unam);
+			mrcnaCA(key, unam, rank);
 		}
 	});
 }
 
-function mrcnaCA(key, un) {
+function mrcnaCA(key, unam, rank) {
+	var user = Meteor.users.findOne({username: unam});
 	if (key === 'whois') {
-		var user = Meteor.users.findOne({username: un});
-		console.log(user);
-
 		var html = '<div class="container">';
-		html += '<div class="row"><div class="col-sm-4" style="font-weight: 900;">Username:</div></div class="col-sm-4">' + un + '</div></div>';
+		html += '<div class="row"><div class="col-sm-4" style="font-weight: 900;">Username:</div></div class="col-sm-4">' + unam + '</div></div>';
 		html += '<div class="row"><div class="col-sm-4" style="font-weight: 900;">Gender:</div></div class="col-sm-4">' + user.profile.gender + '</div></div>';
 
 		if (user.status && user.status.idle) {
@@ -218,12 +265,145 @@ function mrcnaCA(key, un) {
 		});
 	}
 
+	if (key === 'regusr') {
+		Meteor.call('updateRoles', user._id, 'user', function (err, res) {
+			if (res)
+				$.contextMenu('destroy', '#mrcna-' + unam + '.' + rank);
+		});
+	}
+
+	if (key === 'prostf') {
+		Meteor.call('updateRoles', user._id, 'staff', function (err, res) {
+			if (res)
+				$.contextMenu('destroy', '#mrcna-' + unam + '.' + rank);
+		});
+	}
+
+	if (key === 'proadm') {
+		Meteor.call('updateRoles', user._id, 'admin', function (err, res) {
+			if (res)
+				$.contextMenu('destroy', '#mrcna-' + unam + '.' + rank);
+		});
+	}
+
+	if (key === 'demstf') {
+		Meteor.call('updateRoles', user._id, 'staff', function (err, res) {
+			if (res)
+				$.contextMenu('destroy', '#mrcna-' + unam + '.' + rank);
+		});
+	}
+
+	if (key === 'demusr') {
+		Meteor.call('updateRoles', user._id, 'user', function (err, res) {
+			if (res)
+				$.contextMenu('destroy', '#mrcna-' + unam + '.' + rank);
+		});
+	}
+
+	if (key === 'mute') {
+		Meteor.call('toggleMute', user._id, function (err, res) {
+			if (res)
+				$.contextMenu('destroy', '#mrcna-' + unam + '.' + rank);
+		});
+	}
+
 	if (key === 'ban') {
-		// BAN
+		bootbox.dialog({
+			title: 'Ban ' + user.profile.name,
+			message: Blaze.toHTMLWithData(Template.mrc_ban_form),
+			onEscape: true,
+			closeButton: true,
+			buttons: {
+				alert: {
+					label: "Ban",
+					className: "btn-primary",
+					callback: function () {
+						var res = validateBanForm(true);
+						if (res) {
+							var dur = $('#duration').val();
+							var rea = $('#reason').val();
+
+							Meteor.call('ban', user._id, dur, rea, function (err, res) {
+								if (res)
+									$.contextMenu('destroy', '#mrcna-' + unam + '.' + rank);
+							});
+							return true;
+						} else {
+							return false;
+						}
+					}
+				}
+			}
+		});
+		$("#banform").keyup(function () {
+			validateBanForm(false);
+		});
 	}
 
 	if (key === 'unban') {
-		// BAN
+		Meteor.call('unban', user._id, function (err, res) {
+			if (res)
+				$.contextMenu('destroy', '#mrcna-' + unam + '.' + rank);
+		});
 	}
 
+}
+
+function validateBanForm(submit) {
+	var form = {};
+	$.each($('#banform').serializeArray(), function () {
+		form[this.name] = this.value;
+	});
+
+	$('.help-block').remove();
+	$('.form-group').removeClass('has-error');
+	$('.form-group').removeClass('has-warning');
+	$('.form-group').removeClass('has-success');
+	var num = /^[0-9]+$/i;
+	var err = false;
+
+	// Duration Validation
+	if (submit && form.duration === "") {
+		$('#duration').parent().parent().parent().addClass('has-error');
+		$('#duration').after('<span class="help-block">Required</span>');
+		err = true;
+	}
+	else if (form.duration && form.duration !== "" && !num.test(form.duration)) {
+		$('#duration').parent().parent().parent().addClass('has-error');
+		$('#duration').after('<span class="help-block">Numbers only</span>');
+		err = true;
+	}
+	else if (form.duration && form.duration !== "" && form.duration < 1) {
+		$('#duration').parent().parent().parent().addClass('has-error');
+		$('#duration').after('<span class="help-block">Minimum 1 minute</span>');
+		err = true;
+	}
+	else if (form.duration && form.duration !== "" && form.duration > 10080) {
+		$('#duration').parent().parent().parent().addClass('has-error');
+		$('#duration').after('<span class="help-block">Maximum 1 week (10080m)</span>');
+		err = true;
+	}
+	else if (form.duration && form.duration !== "") {
+		$('#duration').parent().parent().parent().addClass('has-success');
+	}
+
+	// Reason Validation
+	if (submit && form.reason === "") {
+		$('#reason').parent().parent().addClass('has-error');
+		$('#reason').after('<span class="help-block">Required</span>');
+		err = true;
+	}
+	else if (form.reason && form.reason !== "" && (form.reason.length < 3 || form.reason.length > 100)) {
+		$('#reason').parent().parent().addClass('has-error');
+		$('#reason').after('<span class="help-block">Between 3 and 100 characters</span>');
+		err = true;
+	}
+	else if (form.reason && form.reason !== "") {
+		$('#reason').parent().parent().addClass('has-success');
+	}
+
+	if (err)
+		return false;
+
+	return true;
 }

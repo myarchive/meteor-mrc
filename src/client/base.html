@@ -29,7 +29,7 @@
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 					{{#if isInRole 'owner,admin' 'server'}}
-						{{> navAdmin}}
+					{{> navAdmin}}
 					{{/if}}
 					{{> navUser}}
 				</ul>
@@ -64,4 +64,33 @@
 
 <template name="mrc_brand_pop">
 	<p>MRC branding.  Like login template is over-ridable with my_</p>
+</template>
+
+<template name="mrc_ban_form">
+	<form id="banform" class="form-horizontal">
+		<fieldset>
+
+			<!-- Appended Input-->
+			<div class="form-group">
+				<label class="col-md-3 control-label" for="duration">Duration</label>
+				<div class="col-md-5">
+					<div class="input-group">
+						<input id="duration" name="duration" class="form-control" placeholder="" type="text" required="">
+						<span class="input-group-addon">minutes</span>
+					</div>
+
+				</div>
+			</div>
+
+			<!-- Text input-->
+			<div class="form-group">
+				<label class="col-md-3 control-label" for="reason">Reason</label>  
+				<div class="col-md-8">
+					<input id="reason" name="reason" type="text" placeholder="Enter a reson here" class="form-control input-md" required="">
+
+				</div>
+			</div>
+
+		</fieldset>
+	</form>
 </template>

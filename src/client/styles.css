@@ -128,11 +128,12 @@ a { cursor: pointer; }
 #mrc-namearea > p:hover {
 	cursor: pointer;
 }
-#mrc-namearea > p.mods {
-	background: #ebebff;
-}
 #mrc-namearea > p:hover {
 	background: #ddd;
+}
+
+#mrc-namearea > p.mods {
+	background: #ebebff;
 }
 #mrc-namearea > p.mods:before {
 	position:absolute;
@@ -140,6 +141,17 @@ a { cursor: pointer; }
 	top: 5px; left: 5px;
 	content: "@";	
 }
+#mrc-namearea > p.mods-muted {
+	background: #ebebff;
+	color: #ffcccc;
+}
+#mrc-namearea > p.mods-muted:before {
+	position:absolute;
+	font-family: FontAwesome;
+	top: 5px; left: 5px;
+	content: "@";	
+}
+
 #mrc-namearea > p.vips {
 	background: #ecffeb;
 }
@@ -149,19 +161,35 @@ a { cursor: pointer; }
 	top: 4px; left: 8px;
 	content: "+";	
 }
-#mrc-namearea > p.gue {
+#mrc-namearea > p.vips-muted {
+	background: #ecffeb;
+	color: #ffcccc;
 }
-#mrc-namearea > p.usr {
+#mrc-namearea > p.vips-muted:before {
+	position:absolute;
+	font-family: FontAwesome;
+	top: 4px; left: 8px;
+	content: "+";	
 }
 
-#mrc-namearea > p.idle {
-	color: #999;
+#mrc-namearea > p.joined-muted {
+	color: #ffcccc;
 }
-#mrc-namearea > p.self {
-	color: #0900ff;
-}
+
 #mrc-namearea > p.banned {
 	color: #ffc600;
+}
+
+#mrc-namearea > p > span.gue {
+}
+#mrc-namearea > p > span.usr {
+}
+
+#mrc-namearea > p > span.idle {
+	color: #999;
+}
+#mrc-namearea > p > span.self {
+	color: #0900ff;
 }
 
 
