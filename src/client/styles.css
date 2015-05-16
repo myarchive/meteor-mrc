@@ -132,44 +132,34 @@ a { cursor: pointer; }
 	background: #ddd;
 }
 
-#mrc-namearea > p.mods {
-	background: #ebebff;
-}
-#mrc-namearea > p.mods:before {
-	position:absolute;
-	font-family: FontAwesome;
-	top: 5px; left: 5px;
-	content: "@";	
-}
+#mrc-namearea > p.mods
 #mrc-namearea > p.mods-muted {
 	background: #ebebff;
-	color: #ffcccc;
 }
+#mrc-namearea > p.mods:before,
 #mrc-namearea > p.mods-muted:before {
 	position:absolute;
 	font-family: FontAwesome;
 	top: 5px; left: 5px;
 	content: "@";	
 }
-
-#mrc-namearea > p.vips {
-	background: #ecffeb;
-}
-#mrc-namearea > p.vips:before {
-	position:absolute;
-	font-family: FontAwesome;
-	top: 4px; left: 8px;
-	content: "+";	
-}
-#mrc-namearea > p.vips-muted {
-	background: #ecffeb;
+#mrc-namearea > p.mods-muted > span {
 	color: #ffcccc;
 }
+
+#mrc-namearea > p.vips,
+#mrc-namearea > p.vips-muted {
+	background: #ecffeb;
+}
+#mrc-namearea > p.vips:before,
 #mrc-namearea > p.vips-muted:before {
 	position:absolute;
 	font-family: FontAwesome;
 	top: 4px; left: 8px;
 	content: "+";	
+}
+#mrc-namearea > p.vips-muted > span {
+	color: #ffcccc;
 }
 
 #mrc-namearea > p.joined-muted {
@@ -276,19 +266,19 @@ a { cursor: pointer; }
 }
 
 .country {
-    margin: 10px;
-    padding: 4px 6px;
-    border: 1px solid #999;
-    border-radius: 5px;
-    display: inline-block;
-    font-family: tahoma;
-    font-size: 12px
+	margin: 10px;
+	padding: 4px 6px;
+	border: 1px solid #999;
+	border-radius: 5px;
+	display: inline-block;
+	font-family: tahoma;
+	font-size: 12px
 }
 .country i {
-    background: url(https://dl.dropbox.com/u/3413283/flags.png) no-repeat;
-    display: inline-block;
-    width: 16px;
-    height: 11px;
+	background: url(https://dl.dropbox.com/u/3413283/flags.png) no-repeat;
+	display: inline-block;
+	width: 16px;
+	height: 11px;
 }
 
 #mrc-chatarea > .join {
@@ -305,7 +295,7 @@ a { cursor: pointer; }
 }
 
 .bigModal > .modal-dialog {
-    width: 70%;
+	width: 70%;
 }
 
 div#ausers_filter {
