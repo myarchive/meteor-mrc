@@ -185,9 +185,9 @@ this.isGuest = function(id) {
 
 this.isMuted = function(id) {
 	var user = Meteor.users.findOne(id);
-	if (user.muted === true)
-		return true;
-	return false;
+	if (user && !user.muted)
+		return false;
+	return true;
 };
 
 this.isBanned = function(id) {
