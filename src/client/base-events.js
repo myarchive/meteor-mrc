@@ -1,7 +1,7 @@
 Template.mrc.onRendered(function () {
-	setInterval(function() {
+	setInterval(function () {
 		var t = (Session.get('timer') > 0) ? Session.get('timer') + 1 : 1;
-		Session.set('timer',t);
+		Session.set('timer', t);
 	}, 1000);
 });
 

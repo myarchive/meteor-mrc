@@ -1,40 +1,54 @@
-Template.registerHelper('mrcLoadBase', function () {
-	if (Meteor.user()) {
-		if (isBanned(Meteor.user()._id)) {
-			var t = Session.get('timer'); t = t; // hack to make reactive
-			if (new Date() < Meteor.user().banned.expires)
-				analytics.page('banned');
-			return (Template["my_banned"]) ? "my_banned" : "mrc_banned";
+Template.mrc.helpers({
+	connectStatus: function () {
+		if (!Meteor.status().connected) {
+			var t = Session.get('timer');
+			var ww = window.innerWidth || document.body.clientWidth;
+			var left = (ww / 2) - 250;
+			var dur = Math.floor((Meteor.status().retryTime - new Date().getTime()) / 1000);
+			if (!isNaN(dur))
+				return '<div id="connectStatus" class="alert alert-warning timer-' + t + '" role="alert" style="position:absolute; top:60px; left:' + left + 'px; width: 500px; z-index: 99999;"><strong>Disconnected:</strong> Attempting reconnect in ' + dur + ' seconds or try <a onclick="Meteor.reconnect()">now</a>... <small style="opacity: 0.6; margin-top: -10px;">(' + Meteor.status().retryCount + ')</small></div>';
 		}
-		if (!Meteor.user().profile || !Meteor.user().profile.name || !Meteor.user().profile.gender || !Meteor.user().username) {
-			analytics.page('signup');
-			return "mrc_newuser";
-		} else {
-			analytics.page('base');
-			return "mrc_base";
+		return '';
+	},
+	mrcLoadBase: function () {
+		if (Meteor.user()) {
+			if (isBanned(Meteor.user()._id)) {
+				var t = Session.get('timer');
+				t = t; // hack to make reactive
+				if (new Date() < Meteor.user().banned.expires)
+					analytics.page('banned');
+				return (Template["my_banned"]) ? "my_banned" : "mrc_banned";
+			}
+			if (!Meteor.user().profile || !Meteor.user().profile.name || !Meteor.user().profile.gender || !Meteor.user().username) {
+				analytics.page('signup');
+				return "mrc_newuser";
+			} else {
+				analytics.page('base');
+				return "mrc_base";
+			}
+		}
+		else {
+			analytics.page('login');
+			return (Template["my_login"]) ? "my_login" : "mrc_login";
 		}
 	}
-	else {
-		analytics.page('login');
-		return (Template["my_login"]) ? "my_login" : "mrc_login";
+});
+
+Template.mrc_banned.helpers({
+	mrcBanExpires: function () {
+		var t = Session.get('timer');
+		var exp = Meteor.user().banned.expires;
+		return moment(exp).fromNow();
+	},
+	mrcBanReason: function () {
+		return Meteor.user().banned.reason;
+
 	}
 });
-
-Template.registerHelper('mrcLoadBrand', function () {
-	return (Template["my_brand"]) ? "my_brand" : "mrc_brand";
-});
-
-Template.registerHelper('mrcBanExpires', function () {
-	var t = Session.get('timer');
-	var exp = Meteor.user().banned.expires;
-	return moment(exp).fromNow();
-});
-
-Template.registerHelper('mrcBanReason', function () {
-	return Meteor.user().banned.reason;
-});
-
 Template.mrc_base.helpers({
+	'mrcLoadBrand': function () {
+		return (Template["my_brand"]) ? "my_brand" : "mrc_brand";
+	},
 	'username': function () {
 		return Meteor.user().profile.name;
 	},
@@ -45,43 +59,45 @@ Template.mrc_base.helpers({
 		var html = '';
 		messages.forEach(function (msg) {
 			var user = Meteor.users.findOne(msg.user);
-			//var nick = user.username;
-			var nick = user.profile.name;
-			var time = new Date(msg.date);
-			var h = (time.getHours() < 10) ? '0' + time.getHours() : time.getHours();
-			var m = (time.getMinutes() < 10) ? '0' + time.getMinutes() : time.getMinutes();
+			if (user && user._id) {
+				//var nick = user.username;
+				var nick = user.profile.name;
+				var time = new Date(msg.date);
+				var h = (time.getHours() < 10) ? '0' + time.getHours() : time.getHours();
+				var m = (time.getMinutes() < 10) ? '0' + time.getMinutes() : time.getMinutes();
 
-			var da = time.getDate(); // Date
-			var da = (da < 10) ? '0' + da : da;
-			var mo = time.getMonth() + 1; // Month (0 based, so add 1)
-			var mo = (mo < 10) ? '0' + mo : mo;
-			var yr = time.getYear() + 1900; // Year (since 1900 so add that)
+				var da = time.getDate(); // Date
+				var da = (da < 10) ? '0' + da : da;
+				var mo = time.getMonth() + 1; // Month (0 based, so add 1)
+				var mo = (mo < 10) ? '0' + mo : mo;
+				var yr = time.getYear() + 1900; // Year (since 1900 so add that)
 
-			if (msg.join) {
-				if (msg.user === Meteor.user()._id)
-					html += '<p class="myjoin"><span class="time">' + yr + '-' + mo + '-' + da + ' ' + h + ':' + m + '</span> *** You have joined the room.</p>';
-				else
-					html += '<p class="join"><span class="time">' + yr + '-' + mo + '-' + da + ' ' + h + ':' + m + '</span> *** ' + nick + ' has joined the room.</p>';
-			}
-			else if (msg.part) {
-				if (msg.user === Meteor.user()._id)
-					html += '<p class="mypart"><span class="time">' + yr + '-' + mo + '-' + da + ' ' + h + ':' + m + '</span> *** You have left the room.</p>';
-				else
-					html += '<p class="part"><span class="time">' + yr + '-' + mo + '-' + da + ' ' + h + ':' + m + '</span> *** ' + nick + ' has left the room.</p>';
-			}
-			else if (msg.quit) {
-				if (msg.user === Meteor.user()._id)
-					html += '<p class="myquit"><span class="time">' + yr + '-' + mo + '-' + da + ' ' + h + ':' + m + '</span> *** You have disconnected.</p>';
-				else
-					html += '<p class="quit"><span class="time">' + yr + '-' + mo + '-' + da + ' ' + h + ':' + m + '</span> *** ' + nick + ' has disconnected.</p>';
-			}
-			else if (msg.message) {
-				var self = (msg.user === Meteor.user()._id) ? 'self' : 'name';
-				if (myrole === 'guest' || myrole === 'user')
-					var goru = 'usr';
-				else
-					var goru = (user.role) ? 'usr' : 'gue';
-				html += '<p class="msg ' + self + '"><span class="time">' + yr + '-' + mo + '-' + da + ' ' + h + ':' + m + '</span> <span class="' + self + ' ' + goru + '" alt="' + user.username + '">' + nick + ':</span> ' + escapeHtml(msg.message) + '</p>';
+				if (msg.join) {
+					if (msg.user === Meteor.user()._id)
+						html += '<p class="myjoin"><span class="time">' + yr + '-' + mo + '-' + da + ' ' + h + ':' + m + '</span> *** You have joined the room.</p>';
+					else
+						html += '<p class="join"><span class="time">' + yr + '-' + mo + '-' + da + ' ' + h + ':' + m + '</span> *** ' + nick + ' has joined the room.</p>';
+				}
+				else if (msg.part) {
+					if (msg.user === Meteor.user()._id)
+						html += '<p class="mypart"><span class="time">' + yr + '-' + mo + '-' + da + ' ' + h + ':' + m + '</span> *** You have left the room.</p>';
+					else
+						html += '<p class="part"><span class="time">' + yr + '-' + mo + '-' + da + ' ' + h + ':' + m + '</span> *** ' + nick + ' has left the room.</p>';
+				}
+				else if (msg.quit) {
+					if (msg.user === Meteor.user()._id)
+						html += '<p class="myquit"><span class="time">' + yr + '-' + mo + '-' + da + ' ' + h + ':' + m + '</span> *** You have disconnected.</p>';
+					else
+						html += '<p class="quit"><span class="time">' + yr + '-' + mo + '-' + da + ' ' + h + ':' + m + '</span> *** ' + nick + ' has disconnected.</p>';
+				}
+				else if (msg.message) {
+					var self = (msg.user === Meteor.user()._id) ? 'self' : 'name';
+					if (myrole === 'guest' || myrole === 'user')
+						var goru = 'usr';
+					else
+						var goru = (user.role) ? 'usr' : 'gue';
+					html += '<p class="msg ' + self + '"><span class="time">' + yr + '-' + mo + '-' + da + ' ' + h + ':' + m + '</span> <span class="' + self + ' ' + goru + '" alt="' + user.username + '">' + nick + ':</span> ' + escapeHtml(msg.message) + '</p>';
+				}
 			}
 		});
 
