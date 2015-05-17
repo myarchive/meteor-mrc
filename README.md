@@ -40,6 +40,12 @@ If you wish to help please contact me via Meteor's IRC, Forums or @alicamarata
 
 # Version History
 
+## 0.2.3
+
+- Mute/Ban working with some bugs
+- Disconnect warnings to users
+- Fixed message display bugs for old users
+
 ## 0.2.2
 
 - Startup procedure with settings.json
