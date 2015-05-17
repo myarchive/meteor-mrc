@@ -48,6 +48,7 @@ Template.mrc_base.onRendered(function () {
 		threshold: '60000',
 		idleOnBlur: true
 	});
+	analytics.page('base')
 });
 
 Template.mrc_base.events({
