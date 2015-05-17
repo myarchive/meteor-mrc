@@ -68,6 +68,13 @@ this.isGuest = function(id) {
 	return true;
 };
 
+this.isMuted = function(id) {
+	var user = Meteor.users.findOne(id);
+	if (user.muted === true)
+		return true;
+	return false;
+};
+
 this.isBanned = function(id) {
 	var user = Meteor.users.findOne(id);
 	if (!user.banned || !user.banned.expires || user.banned.expires < new Date())

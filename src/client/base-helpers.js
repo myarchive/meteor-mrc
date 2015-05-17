@@ -50,6 +50,20 @@ Template.mrc_base.helpers({
 	'username': function () {
 		return Meteor.user().profile.name;
 	},
+	'sendBox': function () {
+		if (isMuted(Meteor.user()._id)) {
+			var html = '<form id="mrc-muted-send" style="margin:0;padding:0;display:inline;position:relative;" onclick="return false;">';
+			html += '<input id="mrc-muted-input" placeholder="You have been temporarily muted by server staff.." style="height:100%; width:100%; padding-right: 75px; background: #ccc" disabled>';
+			html += '<button id="muted-submit" name="muted-submit" class="btn btn-warning" style="position:absolute;top:-8px;right:3px; opacity: 0.4">Muted</button>';
+			html += '</form';			
+		} else {
+			var html = '<form id="mrc-send" style="margin:0;padding:0;display:inline;position:relative;">';
+			html += '<input id="mrc-input" placeholder="Enter message here" style="height:100%; width:100%; padding-right: 75px;">';
+			html += '<button id="submit" name="submit" class="btn btn-primary" style="position:absolute;top:-8px;right:3px">Send</button>';
+			html += '</form';
+		}
+		return html;
+	},
 	'messages': function () {
 		// Session get roomID for multiroom
 		var myrole = (Meteor.user().role) ? Meteor.user().role : 'guest';

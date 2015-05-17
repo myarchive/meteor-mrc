@@ -27,6 +27,9 @@ Meteor.messages.allow({
  **********************/
 
 Meteor.messages.before.insert(function (userId, doc) {
+	if (isMuted(userId))
+		throw new Meteor.Error("You are muted and can not send messages.");
+	
 	doc.date = new Date();
 });
 
