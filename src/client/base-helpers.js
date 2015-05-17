@@ -34,17 +34,15 @@ Template.mrc.helpers({
 	}
 });
 
-Template.mrc_banned.helpers({
-	mrcBanExpires: function () {
+Template.registerHelper('mrcBanExpires', function () {
 		var t = Session.get('timer');
 		var exp = Meteor.user().banned.expires;
-		return moment(exp).fromNow();
-	},
-	mrcBanReason: function () {
-		return Meteor.user().banned.reason;
-
-	}
+		return moment(exp).fromNow(true);
 });
+Template.registerHelper('mrcBanReason', function () {
+		return Meteor.user().banned.reason;
+});
+
 Template.mrc_base.helpers({
 	'mrcLoadBrand': function () {
 		return (Template["my_brand"]) ? "my_brand" : "mrc_brand";
