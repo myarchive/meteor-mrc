@@ -17,8 +17,9 @@ Demo: http://mrc.meteor.com
 3. Remove autopublish and insecure packages `meteor remove autopublish insecure`
 4. Add your desired account services (at least 1 required), ie: `meteor add accounts-password accounts-facebook`
 5. Add `{{> mrc}}` within your body tags
-6. Create a settings.json (Optionally adding Analytics `meteor add okgrow:analytics` or Kadira `meteor add meteorhacks:kadira` with details in settings)
-7. Start your application using the json `meteor --settings settings.json`
+6. Create a settings.json (remove lines for anything not use like analytics)
+7. If wish to use Kadira add it `meteor add meteorhacks:kadira` with details in settings.json
+8. Start your application using the json `meteor --settings settings.json`
 
 * Note: MRC is intended for a blank Meteor application.  See the Demo for a functional example.
 
